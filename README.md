@@ -1,4 +1,4 @@
-![example workflow](https://github.com/v-v-d/Auth_sprint_1/actions/workflows/srv-auth-ci.yml/badge.svg)
+![workflow](https://github.com/v-v-d/Auth_sprint_1/actions/workflows/srv-auth-ci.yml/badge.svg)
 
 # Сервис аутентификации и авторизации
 TODO: Auth_sprint_1#6
