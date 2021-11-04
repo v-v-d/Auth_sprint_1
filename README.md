@@ -1,4 +1,4 @@
-https://app.travis-ci.com/v-v-d/Auth_sprint_1.svg?branch=main
+[![Build Status](https://app.travis-ci.com/v-v-d/Auth_sprint_1.svg?branch=main)](https://app.travis-ci.com/v-v-d/Auth_sprint_1)
 
 # Сервис аутентификации и авторизации
 TODO: Auth_sprint_1#6
