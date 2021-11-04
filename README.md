@@ -1,5 +1,4 @@
-[![Build Status](https://app.travis-ci.com/v-v-d/Auth_sprint_1.svg?branch=main)](https://app.travis-ci.com/v-v-d/Auth_sprint_1)
-[![Coverage Status](https://coveralls.io/repos/github/v-v-d/Auth_sprint_1/badge.svg?branch=main)](https://coveralls.io/github/v-v-d/Auth_sprint_1?branch=main)
+![example workflow](https://github.com/v-v-d/Auth_sprint_1/actions/workflows/srv-auth-ci.yml/badge.svg)
 
 # Сервис аутентификации и авторизации
 TODO: Auth_sprint_1#6
