@@ -16,6 +16,7 @@ jobs:
   include:
     - stage: tests
       name: "Unit Tests"
+      language: python
       script:
         - docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
       after_success:
