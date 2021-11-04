@@ -1,0 +1,13 @@
+alembic==1.7.4
+Flask==1.1.4
+Flask-Migrate==3.1.0
+flask-restplus==0.13.0
+Flask-Security==3.0.0
+gevent==21.8.0
+ipython==7.28.0
+pytest==6.2.5
+redis==3.5.3
+SQLAlchemy==1.4.26
+typer==0.4.0
+Werkzeug==0.16.1
+pydantic==1.8.2
