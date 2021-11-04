@@ -10,8 +10,8 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Unit tests
+#     - uses: actions/checkout@v2
+#     - name: Unit tests
     - id: step1
       run: cat /home/runner/work/Auth_sprint_1/Auth_sprint_1/.env.sample > /home/runner/work/Auth_sprint_1/Auth_sprint_1/.env
     - id: step2
