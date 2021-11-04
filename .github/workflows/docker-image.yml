@@ -7,12 +7,9 @@ on:
     branches: [ main ]
 
 jobs:
-
-  build:
-
+  tests:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag srv-auth:$(date +%s)
+    - name: Unit tests
+      run: docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
