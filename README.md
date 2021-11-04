@@ -1,3 +1,5 @@
+https://app.travis-ci.com/v-v-d/Auth_sprint_1.svg?branch=main
+
 # Сервис аутентификации и авторизации
 TODO: Auth_sprint_1#6
 
