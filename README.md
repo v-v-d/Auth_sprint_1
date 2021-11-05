@@ -1,4 +1,5 @@
 ![tests](https://github.com/v-v-d/Auth_sprint_1/actions/workflows/tests.yml/badge.svg)
+![blackened](https://github.com/v-v-d/Auth_sprint_1/actions/workflows/black.yml/badge.svg)
 
 # Сервис аутентификации и авторизации
 TODO: ![Auth_sprint_1#6](https://github.com/v-v-d/Auth_sprint_1/issues/6)
