@@ -25,4 +25,4 @@ WORKDIR /code
 
 ENV PYTHONPATH=/code
 
-CMD pytest -p no:warnings --cov-report term-missing --cov=/code/app /code/tests
+CMD pytest -p no:warnings --cov-report=xml --cov-report term-missing --cov=/code/app /code/tests
