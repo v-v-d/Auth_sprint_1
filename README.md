@@ -1,7 +1,8 @@
 ![tests](https://github.com/v-v-d/Auth_sprint_1/actions/workflows/tests.yml/badge.svg)
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 # Сервис аутентификации и авторизации
-TODO: ![Auth_sprint_1#6](https://github.com/v-v-d/Auth_sprint_1/issues/6)
+TODO: [Auth_sprint_1#6](https://github.com/v-v-d/Auth_sprint_1/issues/6)
 
 ## Общие правила aka code-style
 1. Вся бизнес-логика должна помещаться в провайдерах src/app/services
