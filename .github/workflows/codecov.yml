@@ -17,9 +17,7 @@ jobs:
       with:
         python-version: 3.9
     - name: Generate coverage report
-      run: |
-        docker-compose -f docker-compose.test.yaml up --build
-        ls -la src
+      run: docker-compose -f docker-compose.test.yaml up --build
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
