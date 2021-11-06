@@ -28,7 +28,8 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     is_superuser = db.Column(db.Boolean())
     last_login = db.Column(db.DateTime())
-    date_joined = db.Column(db.DateTime())
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
     roles = db.relationship(
         "Role", secondary=roles_users, backref=db.backref("users", lazy="dynamic")
     )
