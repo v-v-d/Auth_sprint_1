@@ -2,7 +2,6 @@ import asyncio
 from pathlib import Path
 
 import pytest
-from orjson import orjson
 
 from app.settings import settings
 
@@ -23,7 +22,7 @@ def event_loop():
 def load_fixture():
     def load(filename):
         with open(TEST_CONTAINER_SRC_DIR_PATH / filename, encoding="utf-8") as f:
-            return orjson.loads(f.read())
+            return json.loads(f.read())
 
     return load
 

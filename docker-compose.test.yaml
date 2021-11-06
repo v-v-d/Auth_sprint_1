@@ -11,6 +11,7 @@ services:
       - ./shared:/code/shared
       - ./shared/logs:/code/shared/logs
     env_file:
-      - .env
+#       - .env
+      - .env.sample
     environment:
       - TESTING=True
