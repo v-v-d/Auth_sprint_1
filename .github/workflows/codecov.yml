@@ -48,7 +48,9 @@ jobs:
       with:
         python-version: 3.9
     - name: Generate coverage report
-      run: docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
+      run: |
+        docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
+        ls -la
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
