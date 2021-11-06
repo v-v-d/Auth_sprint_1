@@ -30,6 +30,7 @@ services:
       - ./src/manage.py:/code/manage.py
       - ./shared:/code/shared
       - ./shared/logs:/code/shared/logs
+      - ./src/migrations:/code/migrations
     env_file:
       - .env
     networks:
