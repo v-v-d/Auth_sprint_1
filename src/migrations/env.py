@@ -18,7 +18,7 @@ logger = logging.getLogger("alembic.env")
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from app.models import *
+from app.models import *  # noqa required for changes detection in models
 
 # target_metadata = mymodel.Base.metadata
 
