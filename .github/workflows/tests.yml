@@ -27,6 +27,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Unit tests
       run: |
-        cd src
         pip install -r ./requirements/prod.txt -r ./src/tests/functional/requirements.txt
+        cd src
         pytest ./src/tests
