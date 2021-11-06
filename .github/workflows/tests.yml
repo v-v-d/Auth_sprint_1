@@ -28,5 +28,5 @@ jobs:
     - name: Unit tests
       run: |
         pip install -r ./requirements/prod.txt -r ./src/tests/functional/requirements.txt
-        cd src
-        pytest ./tests
+        export PYTHONPATH=./src
+        pytest ./src/tests
