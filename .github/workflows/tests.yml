@@ -1,15 +1,31 @@
-name: tests
+# name: tests
 
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
+# jobs:
+#   tests:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Unit tests
+#       run: docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
+
+name: tests
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Unit tests
-      run: docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
+      run: |
+        pip install -r requirements/prod.txt -r src/tests/functional/requirements.txt
+        pytest ./src/tests
