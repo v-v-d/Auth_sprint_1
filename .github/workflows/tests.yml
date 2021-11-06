@@ -31,6 +31,7 @@ jobs:
           python-version: 3.9
       - name: Unit tests
         run: |
+          cat .env.sample > .env
           pip install -r ./requirements/prod.txt -r ./src/tests/functional/requirements.txt
           export PYTHONPATH=./src
           pytest ./src/tests
