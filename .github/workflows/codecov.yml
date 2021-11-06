@@ -50,7 +50,7 @@ jobs:
     - name: Generate coverage report
       run: |
         docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
-        ls -la
+        ls -la src
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
