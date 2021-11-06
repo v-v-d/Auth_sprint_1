@@ -24,12 +24,12 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
     is_staff = db.Column(db.Boolean())
-    is_active = db.Column(db.Boolean())
+    active = db.Column(db.Boolean())
     is_superuser = db.Column(db.Boolean())
     last_login = db.Column(db.DateTime())
     date_joined = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
-    def __repr__(self):
-        return f"<User {self.login}>"
+    def __str__(self):
+        return self.login
