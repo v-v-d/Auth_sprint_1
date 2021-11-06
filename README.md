@@ -1,5 +1,6 @@
 ![tests](https://github.com/v-v-d/Auth_sprint_1/actions/workflows/tests.yml/badge.svg)
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+[![codecov](https://codecov.io/gh/v-v-d/Auth_sprint_1/branch/main/graph/badge.svg?token=Q8NOGB813N)](https://codecov.io/gh/v-v-d/Auth_sprint_1)
 
 # Сервис аутентификации и авторизации
 TODO: [Auth_sprint_1#6](https://github.com/v-v-d/Auth_sprint_1/issues/6)
