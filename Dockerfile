@@ -12,7 +12,7 @@ WORKDIR /code
 
 ENV PYTHONPATH=/code
 
-CMD python manage.py runserver
+CMD flask db upgrade && python manage.py runserver
 
 
 FROM base AS tests
