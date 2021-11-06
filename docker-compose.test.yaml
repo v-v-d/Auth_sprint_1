@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   sut:
-    container_name: api-tests
+    container_name: auth-tests
     build:
       context: .
       target: tests
