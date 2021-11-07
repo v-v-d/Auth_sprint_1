@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from app.database import db, session_scope
-from app.main import app
+from app.main import app, redis_conn
 from app.settings import settings
 
 assert settings.TESTING, "You must set TESTING=True env for run the tests."
@@ -18,6 +18,13 @@ def db_init():
         db.create_all()
         yield
         db.drop_all()
+
+
+@pytest.fixture(autouse=True)
+def redis_init():
+    with redis_conn:
+        yield
+        redis_conn.close()
 
 
 @pytest.fixture(autouse=True)
