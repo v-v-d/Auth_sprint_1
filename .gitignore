@@ -128,4 +128,6 @@ dmypy.json
 # local development
 docker-compose.override.yaml
 docker-compose.test.override.yaml
+docker-compose.override.yml
+docker-compose.test.override.yml
 dev.Dockerfile
