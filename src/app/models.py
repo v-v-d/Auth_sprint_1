@@ -4,14 +4,24 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.database import db
 
 
+class TimestampMixin:
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(
+        db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now()
+    )
+
+
 class RolesUsers(db.Model):
     __tablename__ = "roles_users"
+
     id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column("user_id", db.Integer(), db.ForeignKey("user.id"))
-    role_id = db.Column("role_id", db.Integer(), db.ForeignKey("role.id"))
+    user_id = db.Column("user_id", db.Integer(), db.ForeignKey("users.id"))
+    role_id = db.Column("role_id", db.Integer(), db.ForeignKey("roles.id"))
 
 
-class Role(db.Model, RoleMixin):
+class Role(TimestampMixin, db.Model, RoleMixin):
+    __tablename__ = "roles"
+
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
 
@@ -19,7 +29,9 @@ class Role(db.Model, RoleMixin):
         return self.name
 
 
-class User(db.Model, UserMixin):
+class User(TimestampMixin, db.Model, UserMixin):
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True)
@@ -28,10 +40,6 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     is_superuser = db.Column(db.Boolean(), default=False)
     last_login = db.Column(db.DateTime())
-    created_on = db.Column(db.DateTime, server_default=db.func.now())
-    updated_on = db.Column(
-        db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now()
-    )
     roles = db.relationship(
         "Role",
         secondary="content.roles_users",
