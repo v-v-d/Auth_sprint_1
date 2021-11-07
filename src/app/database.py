@@ -3,20 +3,23 @@ from contextlib import contextmanager
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import MetaData
 
 from app.settings import settings
 
-db = SQLAlchemy()
+metadata = MetaData(schema=settings.DB.SCHEMA)
+
+db = SQLAlchemy(metadata=metadata)
 migrate = Migrate()
 
 
 def init_db(app: Flask):
-    db_dsn = "sqlite://" if settings.TESTING else settings.DB.DSN
+    db_dsn = "sqlite:///:memory:" if settings.TESTING else settings.DB.DSN
 
     app.config["SQLALCHEMY_DATABASE_URI"] = db_dsn
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    db.init_app(app)
 
+    db.init_app(app)
     migrate.init_app(app, db)
 
 

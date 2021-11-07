@@ -66,7 +66,7 @@ class DatabaseSettings(BaseDSNSettings):
 
 
 class CommonSettings(BaseSettings):
-    PROJECT_NAME: str = "auth"
+    FLASK_APP: str = "app.main:app"
     OPENAPI_URL: str = "/api/openapi.json"
     BASIC_AUTH_USERNAME: str
     BASIC_AUTH_PASSWD: str
