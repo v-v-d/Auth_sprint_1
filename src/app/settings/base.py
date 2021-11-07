@@ -67,10 +67,8 @@ class DatabaseSettings(BaseDSNSettings):
 
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
-    OPENAPI_URL: str = "/api/openapi.json"
-    BASIC_AUTH_USERNAME: str
-    BASIC_AUTH_PASSWD: str
-    ALLOWED_HOSTS: list[str]
+    ADMIN_LOGIN: str
+    ADMIN_PASSWORD: str
 
     DEBUG: bool = False
     TESTING: bool = False
