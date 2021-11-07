@@ -2,17 +2,21 @@ from app.settings import settings
 from app.redis import redis_conn
 
 
+class Namespace:
+    black = "black_list"
+    refresh = "refresh_token"
+
+
 class BlackListStorage:
     def __init__(self, redis_db: redis_conn):
         self.redis_conn = redis_db
 
     def add(self, token: str):
-        redis_conn.set(name=f"black_list: {token}", value="", ex=settings.REDIS.TTL)
+        redis_conn.set(name=f"{Namespace.black}: {token}", value="", ex=settings.REDIS.TTL)
 
     def get_token(self, token: str):
-        token_in_black_list = redis_conn.get(name=f"black_list: {token}")
-        if token_in_black_list:
-            return True
+        token_in_black_list = redis_conn.get(name=f"{Namespace.black}: {token}")
+        return token_in_black_list is not None
 
 
 class RefreshListStorage:
@@ -20,11 +24,11 @@ class RefreshListStorage:
         self.redis_conn = redis_db
 
     def add(self, token: str, login_user: str):
-        redis_conn.set(name=f"refresh_token: {login_user}", value=token, ex=settings.REDIS.TTL)
+        redis_conn.set(name=f"{Namespace.refresh}: {login_user}", value=token, ex=settings.REDIS.TTL)
 
     def get_refresh_token(self, login_user: str):
-        token_in_black_list = redis_conn.get(name=f"refresh_token: {login_user}", )
-        return token_in_black_list is not None
+        token_in_black_list = redis_conn.get(name=f"{Namespace.refresh}: {login_user}")
+        return token_in_black_list
 
 
 black_list_token = BlackListStorage(redis_db=redis_conn)
