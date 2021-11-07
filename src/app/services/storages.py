@@ -12,7 +12,9 @@ class BlackListStorage:
         self.redis_conn = redis_db
 
     def add(self, token: str):
-        redis_conn.set(name=f"{Namespace.black}: {token}", value="", ex=settings.REDIS.TTL)
+        redis_conn.set(
+            name=f"{Namespace.black}: {token}", value="", ex=settings.REDIS.TTL
+        )
 
     def check(self, token: str):
         token_in_black_list = redis_conn.get(name=f"{Namespace.black}: {token}")
@@ -24,7 +26,11 @@ class RefreshListStorage:
         self.redis_conn = redis_db
 
     def add(self, token: str, login_user: str):
-        redis_conn.set(name=f"{Namespace.refresh}: {login_user}", value=token, ex=settings.REDIS.TTL)
+        redis_conn.set(
+            name=f"{Namespace.refresh}: {login_user}",
+            value=token,
+            ex=settings.REDIS.TTL,
+        )
 
     def get_refresh_token(self, login_user: str):
         token_in_black_list = redis_conn.get(name=f"{Namespace.refresh}: {login_user}")

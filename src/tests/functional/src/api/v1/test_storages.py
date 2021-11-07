@@ -1,7 +1,7 @@
 import pytest
 from app.services import storages
 
-VALUE = 'as2333asdva2dE232.asdasdasd.asdasdasd'
+VALUE = "as2333asdva2dE232.asdasdasd.asdasdasd"
 
 
 def test_token_in_black_list():
