@@ -125,4 +125,7 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-docker-compose.override.yml
+# local development
+docker-compose.override.yaml
+docker-compose.test.override.yaml
+dev.Dockerfile
