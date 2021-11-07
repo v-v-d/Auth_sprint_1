@@ -34,10 +34,10 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("login", sa.String(length=80), nullable=False),
         sa.Column("email", sa.String(length=255), nullable=True),
-        sa.Column("password", sa.String(length=255), nullable=True),
-        sa.Column("is_staff", sa.Boolean(), nullable=True),
+        sa.Column("password", sa.String(length=255), nullable=False),
+        sa.Column("is_staff", sa.Boolean(), nullable=True, default=False),
         sa.Column("active", sa.Boolean(), nullable=True),
-        sa.Column("is_superuser", sa.Boolean(), nullable=True),
+        sa.Column("is_superuser", sa.Boolean(), nullable=True, default=False),
         sa.Column("last_login", sa.DateTime(), nullable=True),
         sa.Column(
             "created_on", sa.DateTime(), server_default=sa.func.now(), nullable=False

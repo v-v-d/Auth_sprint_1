@@ -23,24 +23,31 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True)
-    password = db.Column(db.String(255))
-    is_staff = db.Column(db.Boolean())
+    _password = db.Column("password", db.String(255), nullable=False)
+    is_staff = db.Column(db.Boolean(), default=False)
     active = db.Column(db.Boolean())
-    is_superuser = db.Column(db.Boolean())
+    is_superuser = db.Column(db.Boolean(), default=False)
     last_login = db.Column(db.DateTime())
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now()
     )
     roles = db.relationship(
-        "Role", secondary="roles_users", backref=db.backref("users", lazy="dynamic")
+        "Role",
+        secondary="content.roles_users",
+        backref=db.backref("users", lazy="dynamic"),
     )
 
     def __str__(self):
         return self.login
 
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, password):
+        self._password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return check_password_hash(self._password, password)
