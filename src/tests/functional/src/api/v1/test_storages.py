@@ -1,6 +1,9 @@
-from app.api.v1.storages import BlackListStorage, RefreshListStorage
+import pytest
+from app.services.storages import BlackListStorage, RefreshListStorage
+from app.redis import redis_conn
 
 
-def test_adding_token_black_list(redis_init):
+def test_token_in_black_list():
     black_list_token = 'as2333asdva2dE232'
-    BlackListStorage(redis_init, black_list_token).adding_token_black_list()
+    BlackListStorage(redis_conn).add(black_list_token)
+    assert BlackListStorage(redis_conn).get_token(black_list_token) == True

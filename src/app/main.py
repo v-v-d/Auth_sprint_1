@@ -1,4 +1,3 @@
-import redis
 
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore, Security
@@ -14,9 +13,6 @@ app.config["DEBUG"] = settings.DEBUG
 
 init_db(app)
 init_api(app)
-
-redis_conn = redis.StrictRedis(host=settings.REDIS.HOST, port=settings.REDIS.PORT)
-
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security()
