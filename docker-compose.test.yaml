@@ -4,13 +4,12 @@ services:
   sut:
     container_name: auth-tests
     build:
-      context: .
-      target: tests
+      context: ""
     volumes:
       - ./src:/code
       - ./shared:/code/shared
       - ./shared/logs:/code/shared/logs
     env_file:
-      - .env.sample
+      - .env
     environment:
-      - TESTING=True
+      - TESTING=False

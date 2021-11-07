@@ -35,4 +35,4 @@ def create_superuser():
 
 
 if __name__ == "__main__":
-    typer_app()
+    runserver()
