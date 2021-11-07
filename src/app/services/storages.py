@@ -14,7 +14,7 @@ class BlackListStorage:
     def add(self, token: str):
         redis_conn.set(name=f"{Namespace.black}: {token}", value="", ex=settings.REDIS.TTL)
 
-    def get_token(self, token: str):
+    def check(self, token: str):
         token_in_black_list = redis_conn.get(name=f"{Namespace.black}: {token}")
         return token_in_black_list is not None
 
