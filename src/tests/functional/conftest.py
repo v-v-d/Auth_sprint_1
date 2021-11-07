@@ -5,7 +5,8 @@ import pytest
 from app.database import db, session_scope
 from app.main import app
 from app.settings import settings
-
+from app import redis
+from unittest.mock import MagicMock
 
 assert settings.TESTING, "You must set TESTING=True env for run the tests."
 
