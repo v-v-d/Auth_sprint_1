@@ -48,7 +48,8 @@ class BaseDSNSettings(BaseSettings):
 class RedisSettings(BaseDSNSettings):
     HOST: str = "api-redis"
     PORT: int = 6379
-    TTL: int = 60 * 5
+    BLACK_LIST_TTL: int = 60 * 5
+    REFRESH_LIST_TTL: int = 60 * 5
     PROTOCOL: str = "redis"
     DSN: RedisDsn = None
 
