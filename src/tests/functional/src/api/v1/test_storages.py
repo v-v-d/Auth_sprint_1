@@ -7,7 +7,7 @@ LOGIN_USER = "Ivanov"
 
 def test_add_token_add_black_list():
     storages.black_list_storage.add(VALUE)
-    assert storages.black_list_storage.get(key=VALUE) == ''
+    assert storages.black_list_storage.get(key=VALUE) == ""
 
 
 def test_token_in_black_list():
@@ -25,4 +25,3 @@ def test_build_key():
     key_refresh_list = f"{storages.NamespaceEnum.refresh_list.value}:{LOGIN_USER}"
     assert storages.black_list_storage._build_key(VALUE) == key_black_list
     assert storages.refresh_list_storage._build_key(LOGIN_USER) == key_refresh_list
-
