@@ -50,11 +50,7 @@ class RedisStorage(AbstractStorage):
             raise StorageError from err
 
     def check(self, key: str) -> bool:
-        key = self._build_key(key)
-        try:
-            return self.redis.get(name=key) is not None
-        except Exception as err:
-            raise StorageError from err
+        return self.get(key) is not None
 
     def _build_key(self, key: str) -> str:
         return f"{self.namespace}:{key}"
