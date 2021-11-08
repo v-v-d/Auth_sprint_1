@@ -5,7 +5,38 @@ VALUE = "as2333asdva2dE232.asdasdasd.asdasdasd"
 LOGIN_USER = "Ivanov"
 
 
-def test_add_token_add_black_list():
+@pytest.fixture
+def failed_redis(monkeypatch):
+    def mocked_return(*args, **kwargs):
+        raise Exception
+
+    monkeypatch.setattr(storages.black_list_storage.redis, "set", mocked_return)
+    monkeypatch.setattr(storages.black_list_storage.redis, "get", mocked_return)
+    monkeypatch.setattr(storages.refresh_list_storage.redis, "set", mocked_return)
+    monkeypatch.setattr(storages.refresh_list_storage.redis, "get", mocked_return)
+
+
+def test_add_to_black_list_failed(failed_redis):
+    with pytest.raises(storages.StorageError):
+        storages.black_list_storage.add(VALUE)
+
+
+def test_get_from_black_list_failed(failed_redis):
+    with pytest.raises(storages.StorageError):
+        storages.black_list_storage.get(VALUE)
+
+
+def test_add_to_refresh_token_failed(failed_redis):
+    with pytest.raises(storages.StorageError):
+        storages.refresh_list_storage.add(VALUE)
+
+
+def test_get_from_refresh_token_failed(failed_redis):
+    with pytest.raises(storages.StorageError):
+        storages.refresh_list_storage.get(VALUE)
+
+
+def test_add_token_black_list():
     storages.black_list_storage.add(VALUE)
     assert storages.black_list_storage.get(key=VALUE) == ""
 

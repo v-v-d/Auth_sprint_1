@@ -29,7 +29,7 @@ class AbstractStorage(ABC):
         pass
 
 
-class RedisStorage:
+class RedisStorage(AbstractStorage):
     def __init__(self, redis: StrictRedis, namespace: NamespaceEnum, ttl: int) -> None:
         self.redis = redis
         self.namespace = namespace
@@ -44,13 +44,17 @@ class RedisStorage:
 
     def get(self, key: str) -> Union[None, str]:
         key = self._build_key(key)
-        refresh_token = self.redis.get(name=key)
-        return refresh_token
+        try:
+            return self.redis.get(name=key)
+        except Exception as err:
+            raise StorageError from err
 
     def check(self, key: str) -> bool:
         key = self._build_key(key)
-        token_in_black_list = self.redis.get(name=key)
-        return token_in_black_list is not None
+        try:
+            return self.redis.get(name=key) is not None
+        except Exception as err:
+            raise StorageError from err
 
     def _build_key(self, key: str) -> str:
         return f"{self.namespace}:{key}"
