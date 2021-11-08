@@ -15,7 +15,7 @@ class StorageError(Exception):
     pass
 
 
-class AbstractStorage(ABC):
+class AbstractStorage(ABC):  # pragma: no cover
     @abstractmethod
     def add(self, key: str) -> None:
         pass
