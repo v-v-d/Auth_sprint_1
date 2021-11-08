@@ -1,9 +1,11 @@
 from pathlib import Path
 
 import pytest
+from fakeredis import FakeStrictRedis
 
 from app.database import db, session_scope
 from app.main import app
+from app.services import storages
 from app.settings import settings
 
 assert settings.TESTING, "You must set TESTING=True env for run the tests."
@@ -18,6 +20,13 @@ def db_init():
         db.create_all()
         yield
         db.drop_all()
+
+
+@pytest.fixture(autouse=True)
+def mocked_redis(monkeypatch):
+    faked_redis = FakeStrictRedis(decode_responses=True)
+    monkeypatch.setattr(storages.black_list_storage, "redis", faked_redis)
+    monkeypatch.setattr(storages.refresh_list_storage, "redis", faked_redis)
 
 
 @pytest.fixture(autouse=True)

@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore, Security
 
+
 from app.api import init_api
 from app.database import init_db, db
 from app.models import User, Role
