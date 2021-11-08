@@ -30,8 +30,8 @@ class AbstractStorage(ABC):
 
 
 class RedisStorage(AbstractStorage):
-    def __init__(self, redis: StrictRedis, namespace: NamespaceEnum, ttl: int) -> None:
-        self.redis = redis
+    def __init__(self, namespace: NamespaceEnum, ttl: int) -> None:
+        self.redis: StrictRedis = redis_conn
         self.namespace = namespace
         self.ttl = ttl
 
@@ -61,8 +61,8 @@ class RedisStorage(AbstractStorage):
 
 
 black_list_storage = RedisStorage(
-    redis_conn, NamespaceEnum.black_list.value, settings.REDIS.BLACK_LIST_TTL
+    NamespaceEnum.black_list.value, settings.REDIS.BLACK_LIST_TTL
 )
 refresh_list_storage = RedisStorage(
-    redis_conn, NamespaceEnum.refresh_list.value, settings.REDIS.REFRESH_LIST_TTL
+    NamespaceEnum.refresh_list.value, settings.REDIS.REFRESH_LIST_TTL
 )
