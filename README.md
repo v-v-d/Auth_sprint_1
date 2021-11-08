@@ -7,6 +7,7 @@ TODO: [Auth_sprint_1#6](https://github.com/v-v-d/Auth_sprint_1/issues/6)
 
 ## Ресурсы
 - Доска: https://github.com/users/v-v-d/projects/3
+
 Репозитории:
 - сервис Auth API: https://github.com/v-v-d/Auth_sprint_1
 - сервис API: https://github.com/v-v-d/Async_API_sprint_1
