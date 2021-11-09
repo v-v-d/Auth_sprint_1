@@ -11,6 +11,7 @@ api = Api(
 
 api.add_namespace(admin.auth.namespace)
 api.add_namespace(v1.auth.namespace)
+api.add_namespace(v1.account.namespace)
 
 
 def init_api(app: Flask):
