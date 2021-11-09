@@ -9,7 +9,7 @@ api = Api(
     description="Auth API operations",
 )
 
-api.add_namespace(admin.auth.namespace)
+api.add_namespace(admin.namespace)
 api.add_namespace(v1.auth.namespace)
 
 

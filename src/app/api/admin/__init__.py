@@ -1,1 +1,1 @@
-from app.api.admin import auth
+from app.api.admin.namespaces import namespace
