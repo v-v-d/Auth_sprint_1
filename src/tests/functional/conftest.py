@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from app import redis
 from fakeredis import FakeStrictRedis
 
 from app.database import db, session_scope
@@ -25,6 +26,8 @@ def db_init():
 @pytest.fixture(autouse=True)
 def mocked_redis(monkeypatch):
     faked_redis = FakeStrictRedis(decode_responses=True)
+    monkeypatch.setattr(redis, "redis_conn", faked_redis)
+    monkeypatch.setattr(storages, "redis_conn", faked_redis)
     monkeypatch.setattr(storages.black_list_storage, "redis", faked_redis)
     monkeypatch.setattr(storages.refresh_list_storage, "redis", faked_redis)
 

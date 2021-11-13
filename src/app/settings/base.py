@@ -48,8 +48,6 @@ class BaseDSNSettings(BaseSettings):
 class RedisSettings(BaseDSNSettings):
     HOST: str = "api-redis"
     PORT: int = 6379
-    BLACK_LIST_TTL: int = 60 * 5
-    REFRESH_LIST_TTL: int = 60 * 5
     PROTOCOL: str = "redis"
     DSN: RedisDsn = None
 
@@ -80,3 +78,6 @@ class CommonSettings(BaseSettings):
     WSGI: WSGISettings = WSGISettings()
     REDIS: RedisSettings = RedisSettings()
     DB: DatabaseSettings = DatabaseSettings()
+
+    BLACK_LIST_TTL: int = 60 * 60 * 24 * 180  # 180 days
+    REFRESH_LIST_TTL: int = 60 * 60 * 24 * 30  # 30 days

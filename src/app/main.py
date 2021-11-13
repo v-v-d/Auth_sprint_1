@@ -1,9 +1,10 @@
 import http
+from datetime import timedelta
 
 from flask import Flask, jsonify
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, current_user
+from flask_jwt_extended import JWTManager, jwt_required, current_user
 from flask_restplus import Api, Resource, Namespace, fields
-from flask_security import SQLAlchemyUserDatastore, Security
+from flask_security import SQLAlchemyUserDatastore, Security, logout_user
 from sqlalchemy.exc import IntegrityError
 from werkzeug import exceptions
 
@@ -12,6 +13,8 @@ from app.api.parsers import role_parser
 from app.api.schemas import role_schema
 from app.database import init_db, db, session_scope
 from app.models import User, Role
+from app.services.account import AccountService
+from app.services.storages import StorageError, token_service
 from app.settings import settings
 
 app = Flask(settings.FLASK_APP)
@@ -26,6 +29,8 @@ security = Security()
 security.init_app(app, user_datastore)
 
 app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 jwt = JWTManager(app)
 
 
@@ -87,23 +92,17 @@ class LoginView(Resource):
         user = User.query.filter_by(login=args["login"]).one_or_none()
 
         if not user or not user.check_password(args["password"]):
-            return exceptions.Unauthorized
+            raise exceptions.Unauthorized()
 
-        access_token = create_access_token(
-            identity=user, additional_claims={
-                "is_admin": user.is_admin,
-            }
-        )
-        refresh_token = create_refresh_token(identity=user)
+        account_service = AccountService(user)
+        access_token, refresh_token = account_service.get_token_pair()
+
+        try:
+            token_service.set_new_refresh_token(refresh_token, user.id)
+        except StorageError:
+            raise exceptions.FailedDependency()
 
         return jsonify(access_token=access_token, refresh_token=refresh_token)
-
-
-# @jwt.token_in_blocklist_loader
-# def check_if_token_is_revoked(jwt_header, jwt_payload):
-#     jti = jwt_payload["jti"]
-#     token_in_redis = jwt_redis_blocklist.get(jti)
-#     return token_in_redis is not None
 
 
 refresh_parser = api.parser()
@@ -117,19 +116,31 @@ class RefreshView(Resource):
     def post(self):
         args = login_parser.parse_args()
 
-        user = User.query.filter_by(login=args["login"]).one_or_none()
+        refresh_token = args["refresh_token"]
 
-        if not user or not user.check_password(args["password"]):
-            return exceptions.Unauthorized
+        try:
+            is_in_black_list = token_service.exists_in_black_list(refresh_token)
+        except StorageError:
+            raise exceptions.FailedDependency()
 
-        access_token = create_access_token(
-            identity=user, additional_claims={
-                "is_admin": user.is_admin,
-            }
-        )
-        refresh_token = create_refresh_token(identity=user)
+        if is_in_black_list:
+            try:
+                token_service.invalidate_current_refresh_token(current_user.id)
+            except StorageError:
+                raise exceptions.FailedDependency()
 
-        return jsonify(access_token=access_token, refresh_token=refresh_token)
+            logout_user()
+            raise exceptions.Unauthorized()
+
+        account_service = AccountService(current_user)
+        access_token, new_refresh_token = account_service.get_token_pair()
+
+        try:
+            token_service.set_new_refresh_token(new_refresh_token, current_user.id, refresh_token)
+        except StorageError:
+            raise exceptions.FailedDependency()
+
+        return jsonify(access_token=access_token, refresh_token=new_refresh_token)
 
 
 @namespace.route("/who_am_i")
