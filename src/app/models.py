@@ -108,3 +108,10 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
     @is_staff.setter
     def is_staff(self, state: bool) -> None:
         self._is_staff = state
+
+    @property
+    def is_admin(self) -> bool:
+        return (
+            self.has_role(DefaultRoleEnum.staff.value)
+            or self.has_role(DefaultRoleEnum.superuser.value)
+        )

@@ -27,11 +27,11 @@ def runserver():
 @typer_app.command()
 def create_superuser():
     with session_scope():
-        user_datastore.create_user(
+        user = user_datastore.create_user(
             login=settings.ADMIN_LOGIN,
             password=settings.ADMIN_PASSWORD,
-            is_superuser=True,
         )
+        user_datastore.add_role_to_user(user, "superuser")
 
 
 if __name__ == "__main__":
