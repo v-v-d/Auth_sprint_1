@@ -1,7 +1,6 @@
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, create_refresh_token
 from .storages import refresh_list_storage
-import redis
 
 
 def auth_user(user):

@@ -1,14 +1,15 @@
 import flask
 from flask import request
-from flask_restplus import Namespace, Resource, fields
 from flask import jsonify
+
+from flask_restplus import Namespace, Resource, fields
+from flask_security import auth_required  # тут можно сделать сессию
 
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.models import User
 from app.database import db
-from app.main import jwt
-from app.service.auth import auth_user
+from app.services.auth import auth_user
 
 
 namespace = Namespace("api/v1/account", description="Registration API operations")
@@ -50,16 +51,18 @@ class Login(Resource):
         user = User.query.filter_by(login=request.json.get('login')).first()
         if not user or not user.check_password(request.json.get('password')):
             return flask.abort(404)
-
-        auth_user(user)
-
-        return {'message': 'registered successfully'}
+        token = auth_user(user)
+        return jsonify(
+            access_token=token.json.get('access_token'),
+            refresh_token=token.json.get('refresh_token'),
+            message='registered successfully'
+        )
 
 
 @namespace.route("/sigin")
 class SigIn(Resource):
     @namespace.doc('sigin')
     @jwt_required()
-    def post(self):
-        current_user = get_jwt_identity()
-        return jsonify(logged_in_as=current_user), 200
+    def get(self):
+        user = get_jwt_identity()
+        return user

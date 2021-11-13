@@ -1,1 +1,1 @@
-from app.api.v1 import auth, account
+from app.api.v1 import account

@@ -1,3 +1,7 @@
+import datetime
+
+from datetime import timedelta
+
 from pathlib import Path
 
 from pydantic import BaseSettings, AnyUrl, validator, RedisDsn, PostgresDsn
@@ -66,6 +70,12 @@ class DatabaseSettings(BaseDSNSettings):
         env_prefix = "POSTGRES_"
 
 
+class JwtSettings(BaseSettings):
+    JWT_SECRET_KEY : str = "super-secret"
+    JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(hours=1)
+    JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=30)
+
+
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
     ADMIN_LOGIN: str
@@ -80,3 +90,5 @@ class CommonSettings(BaseSettings):
     WSGI: WSGISettings = WSGISettings()
     REDIS: RedisSettings = RedisSettings()
     DB: DatabaseSettings = DatabaseSettings()
+
+    JWT: JwtSettings = JwtSettings()

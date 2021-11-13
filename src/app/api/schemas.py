@@ -4,8 +4,14 @@ from app.api import v1
 
 user_schema = {
     "id": fields.Integer(),
-    "username": fields.String(),
+    "login": fields.String(),
     "email": fields.String(),
 }
 
-auth_user_schema = v1.auth.namespace.model("User", user_schema)
+
+auth_schema = {
+    'login': fields.String(required=True),
+    'password': fields.String(required=True),
+}
+
+auth_user_schema = v1.account.namespace.model("User", auth_schema)
