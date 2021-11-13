@@ -1,17 +1,14 @@
 import http
 
+from flask import Flask, jsonify
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, current_user
+from flask_restplus import Api, Resource, Namespace, fields
+from flask_security import SQLAlchemyUserDatastore, Security
 from sqlalchemy.exc import IntegrityError
 from werkzeug import exceptions
 
+from app.api.admin.utils import admin_required
 from app.api.parsers import role_parser
-from flask import Flask
-from flask_jwt_extended import JWTManager, jwt_required
-from flask_restplus import Api, Resource, Namespace
-from flask_security import SQLAlchemyUserDatastore, Security
-
-
-from app.api import init_api
-from app.api.admin.utils import admin_role_required
 from app.api.schemas import role_schema
 from app.database import init_db, db, session_scope
 from app.models import User, Role
@@ -61,55 +58,90 @@ def user_lookup_callback(_jwt_header, jwt_data):
     return User.query.filter_by(id=identity).one_or_none()
 
 
+login_schema = namespace.model("Login", {
+    "access_token": fields.String(),
+    "refresh_token": fields.String(),
+})
+
+login_parser = namespace.parser()
+login_parser.add_argument("login", type=str, required=True, help="Login")
+login_parser.add_argument("password", type=str, required=True, help="Password")
+
+
 class BaseJWTResource(Resource):
     method_decorators = (jwt_required(), )
 
 
 class BaseJWTAdminResource(Resource):
-    pass
-    # method_decorators = (admin_role_required, jwt_required())
+    method_decorators = (admin_required(), )
 
 
 @namespace.route("/login")
-class LoginView(BaseJWTResource):
+class LoginView(Resource):
     @namespace.doc("login")
-    @namespace.expect(role_parser)
-    @namespace.marshal_with(admin_role_schema, code=http.HTTPStatus.CREATED)
+    @namespace.expect(login_parser)
+    # @namespace.marshal_with(login_schema, code=http.HTTPStatus.OK)
     def post(self):
-        new_role = Role(**role_parser.parse_args())
+        args = login_parser.parse_args()
 
-        try:
-            with session_scope() as session:
-                session.add(new_role)
-        except IntegrityError:
-            raise exceptions.BadRequest("Already exists.")
+        user = User.query.filter_by(login=args["login"]).one_or_none()
 
-        return new_role, http.HTTPStatus.CREATED
+        if not user or not user.check_password(args["password"]):
+            return exceptions.Unauthorized
 
+        access_token = create_access_token(
+            identity=user, additional_claims={
+                "is_admin": user.is_admin,
+            }
+        )
+        refresh_token = create_refresh_token(identity=user)
 
-@app.route("/login", methods=["POST"])
-def login():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-
-    user = User.query.filter_by(username=username).one_or_none()
-    if not user or not user.check_password(password):
-        return jsonify("Wrong username or password"), 401
-
-    # Notice that we are passing in the actual sqlalchemy user object here
-    access_token = create_access_token(identity=user)
-    return jsonify(access_token=access_token)
+        return jsonify(access_token=access_token, refresh_token=refresh_token)
 
 
-@app.route("/who_am_i", methods=["GET"])
-@jwt_required()
-def protected():
-    # We can now access our sqlalchemy User object via `current_user`.
-    return jsonify(
-        id=current_user.id,
-        full_name=current_user.full_name,
-        username=current_user.username,
-    )
+# @jwt.token_in_blocklist_loader
+# def check_if_token_is_revoked(jwt_header, jwt_payload):
+#     jti = jwt_payload["jti"]
+#     token_in_redis = jwt_redis_blocklist.get(jti)
+#     return token_in_redis is not None
+
+
+refresh_parser = api.parser()
+refresh_parser.add_argument("Refresh", location='args', help="Refresh query param", required=True)
+
+
+@namespace.route("/refresh")
+class RefreshView(Resource):
+    @namespace.doc("refresh")
+    @namespace.expect(refresh_parser)
+    def post(self):
+        args = login_parser.parse_args()
+
+        user = User.query.filter_by(login=args["login"]).one_or_none()
+
+        if not user or not user.check_password(args["password"]):
+            return exceptions.Unauthorized
+
+        access_token = create_access_token(
+            identity=user, additional_claims={
+                "is_admin": user.is_admin,
+            }
+        )
+        refresh_token = create_refresh_token(identity=user)
+
+        return jsonify(access_token=access_token, refresh_token=refresh_token)
+
+
+@namespace.route("/who_am_i")
+class SomeView(BaseJWTResource):
+    @namespace.doc("who_am_i")
+    def get(self):
+        return jsonify(
+            id=current_user.id,
+            login=current_user.login,
+            email=current_user.email,
+            roles=current_user.roles,
+        )
 
 
 @namespace.route("/roles")

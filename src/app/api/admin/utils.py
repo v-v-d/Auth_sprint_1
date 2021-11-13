@@ -1,17 +1,20 @@
 from functools import wraps
 
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import verify_jwt_in_request, get_jwt
 from werkzeug import exceptions
 
 
-def admin_role_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        user = get_jwt_identity()
+def admin_required():
+    def wrapper(func):
+        @wraps(func)
+        def decorator(*args, **kwargs):
+            verify_jwt_in_request()
+            claims = get_jwt()
 
-        if not user.is_staff:
+            if claims["is_admin"]:
+                return func(*args, **kwargs)
+
             raise exceptions.Forbidden()
 
-        return func(*args, **kwargs)
-
+        return decorator
     return wrapper
