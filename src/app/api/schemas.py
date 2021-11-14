@@ -13,5 +13,3 @@ auth_schema = {
     'login': fields.String(required=True),
     'password': fields.String(required=True),
 }
-
-auth_user_schema = v1.account.namespace.model("User", auth_schema)

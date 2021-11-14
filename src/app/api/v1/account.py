@@ -10,20 +10,18 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.models import User
 from app.database import db
 from app.services.auth import auth_user
+from app.api.schemas import auth_schema
 
 
 namespace = Namespace("api/v1/account", description="Registration API operations")
 
-model_register = namespace.model('sigup', {
-    'login': fields.String(required=True),
-    'password': fields.String(required=True),
-})
+auth_user_schema = namespace.model("User", auth_schema)
 
 
 @namespace.route('/register')
 class SigUp(Resource):
     @namespace.doc('register')
-    @namespace.expect(model_register)
+    @namespace.expect(auth_user_schema)
     def post(self):
         login = request.json.get('login')
         password = request.json.get('password')
@@ -48,7 +46,7 @@ class SigUp(Resource):
 @namespace.route('/login')
 class Login(Resource):
     @namespace.doc('login')
-    @namespace.expect(model_register)
+    @namespace.expect(auth_user_schema)
     def post(self):
         user = User.query.filter_by(login=request.json.get('login')).first()
         if not user or not user.check_password(request.json.get('password')):
@@ -61,10 +59,27 @@ class Login(Resource):
         )
 
 
-@namespace.route("/sigin")
+@namespace.route('/sigin')
 class SigIn(Resource):
     @namespace.doc('sigin')
     @jwt_required()
     def get(self):
         user = get_jwt_identity()
         return user
+
+
+@namespace.route('/edit_user')
+class EditUser(Resource):
+    @namespace.doc('edit_user')
+    @namespace.expect(auth_user_schema)
+    @jwt_required()
+    def put(self):
+        identity = get_jwt_identity()
+        user = User.query.get_or_404(identity)
+        if request.json.get('login'):
+            user.login = request.json.get('login')
+        if request.json.get('password'):
+            user.password = request.json.get('password')
+
+        db.session.commit()
+        return jsonify('updated successfully')
