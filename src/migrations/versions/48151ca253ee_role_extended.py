@@ -39,13 +39,16 @@ def upgrade():
         roles_table,
         [
             {
-                "id": 1,
+                "name": "guest",
+                "is_active": True,
+                "description": "Designates that this user has basic permissions.",
+            },
+            {
                 "name": "superuser",
                 "is_active": True,
                 "description": "Designates that this user has all permissions without explicitly assigning them.",
             },
             {
-                "id": 2,
                 "name": "staff",
                 "is_active": True,
                 "description": "Designates whether this user can access the admin service.",

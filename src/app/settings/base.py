@@ -79,5 +79,6 @@ class CommonSettings(BaseSettings):
     REDIS: RedisSettings = RedisSettings()
     DB: DatabaseSettings = DatabaseSettings()
 
-    BLACK_LIST_TTL: int = 60 * 60 * 24 * 180  # 180 days
-    REFRESH_LIST_TTL: int = 60 * 60 * 24 * 30  # 30 days
+    JWT_ACCESS_TOKEN_EXPIRES: int = 60
+    JWT_REFRESH_TOKEN_EXPIRES: int = 60 * 60 * 24 * 30  # 30 days
+    DEFAULT_PAGE_LIMIT: int = 5

@@ -1,5 +1,7 @@
 from gevent import monkey
 
+from app.models import DefaultRoleEnum
+
 monkey.patch_all()
 
 import typer
@@ -31,7 +33,7 @@ def create_superuser():
             login=settings.ADMIN_LOGIN,
             password=settings.ADMIN_PASSWORD,
         )
-        user_datastore.add_role_to_user(user, "superuser")
+        user_datastore.add_role_to_user(user, DefaultRoleEnum.superuser.value)
 
 
 if __name__ == "__main__":

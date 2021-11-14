@@ -33,6 +33,8 @@ services:
       - ./src/migrations:/code/migrations
     env_file:
       - .env
+#    environment:
+#      - DEBUG=True
     networks:
       yandex:
 
