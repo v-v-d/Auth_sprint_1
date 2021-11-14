@@ -12,9 +12,9 @@ def auth_user(user):
         refresh_token = create_refresh_token(identity=user.login)
         refresh_list_storage.add(user.login, refresh_token)
 
-    return jsonify(access_token=access_token,
-                   refresh_token=refresh_token,
-                   msg="Token created")
+    return jsonify(
+        access_token=access_token, refresh_token=refresh_token, msg="Token created"
+    )
 
 
 def black_list(token):
@@ -25,4 +25,3 @@ def black_list(token):
 def check_black_list(token):
     check = black_list_storage.check(token)
     return check
-

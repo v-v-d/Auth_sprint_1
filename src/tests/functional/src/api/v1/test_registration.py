@@ -3,10 +3,10 @@ from app.settings import settings
 
 
 def test_create_user(client):
-    create_user = client.post('api/v1/account/register', json={
-            "login": "test_user1",
-            "password": "390409fds90hLL"
-        })
+    create_user = client.post(
+        "api/v1/account/register",
+        json={"login": "test_user1", "password": "390409fds90hLL"},
+    )
 
     assert create_user.status_code == 200
 

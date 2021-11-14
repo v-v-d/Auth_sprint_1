@@ -54,6 +54,7 @@ class RedisSettings(BaseDSNSettings):
     PORT: int = 6379
     BLACK_LIST_TTL: int = 60 * 5
     REFRESH_LIST_TTL: int = 60 * 5
+    ACCESS_LIST_TTL: int = 60 * 3
     PROTOCOL: str = "redis"
     DSN: RedisDsn = None
 
@@ -71,7 +72,7 @@ class DatabaseSettings(BaseDSNSettings):
 
 
 class JwtSettings(BaseSettings):
-    JWT_SECRET_KEY : str = "super-secret"
+    JWT_SECRET_KEY: str = "super-secret"
     JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=30)
 
