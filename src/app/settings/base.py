@@ -54,6 +54,7 @@ class RedisSettings(BaseDSNSettings):
     PORT: int = 6379
     BLACK_LIST_TTL: int = 60 * 5
     REFRESH_LIST_TTL: int = 60 * 5
+    ACCESS_LIST_TTL: int = 60 * 3
     PROTOCOL: str = "redis"
     DSN: RedisDsn = None
 

@@ -70,6 +70,15 @@ class SignIn(Resource):
             return jsonify(message='Update the token please')
 
 
+@namespace.route('/logout')
+class Logout(Resource):
+    @namespace.doc('logout')
+    @jwt_required()
+    def delete(self):
+        access = get_jwt()["jti"]
+        return black_list(access)
+
+
 @namespace.route('/edit_user')
 class EditUser(Resource):
     @namespace.doc('edit_user')
