@@ -5,4 +5,4 @@ from app.settings import settings
 
 
 class BaseJWTResource(Resource):
-    method_decorators = [] if settings.DEBUG else (jwt_required(), )
+    method_decorators = [] if settings.DEBUG else (jwt_required(),)

@@ -19,9 +19,12 @@ class CheckUserRoleView(BaseJWTResource):
 
 @namespace.route("/users/<int:user_id>/set-role/<int:role_id>")
 class UserRoleView(BaseJWTResource):
-    @namespace.doc("change user role", responses={
-        http.HTTPStatus.NOT_FOUND: "Not Found",
-    })
+    @namespace.doc(
+        "change user role",
+        responses={
+            http.HTTPStatus.NOT_FOUND: "Not Found",
+        },
+    )
     def patch(self, user_id: int, role_id: int):
         user = User.query.get_or_404(user_id)
         role = Role.query.get_or_404(role_id)

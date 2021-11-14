@@ -55,7 +55,11 @@ class RedisTokenStorage(AbstractTokenStorage):
 
     def invalidate_token_pair(self, access_token_jti: str, user_id: int) -> None:
         def callback(pipe: Pipeline) -> None:
-            pipe.set(name=access_token_jti, value=user_id, ex=settings.JWT.ACCESS_TOKEN_EXPIRES)
+            pipe.set(
+                name=access_token_jti,
+                value=user_id,
+                ex=settings.JWT.ACCESS_TOKEN_EXPIRES,
+            )
             pipe.delete(user_id)
 
         self._execute(self.redis.transaction, func=callback)

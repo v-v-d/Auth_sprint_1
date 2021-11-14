@@ -26,10 +26,13 @@ class RolesView(BaseJWTResource):
 
         return paginator.items
 
-    @namespace.doc("create role", responses={
-        http.HTTPStatus.BAD_REQUEST: "Bad Request",
-        http.HTTPStatus.CREATED: "Created",
-    })
+    @namespace.doc(
+        "create role",
+        responses={
+            http.HTTPStatus.BAD_REQUEST: "Bad Request",
+            http.HTTPStatus.CREATED: "Created",
+        },
+    )
     @namespace.expect(role_parser)
     @namespace.marshal_with(admin_role_schema, code=http.HTTPStatus.CREATED)
     def post(self):
@@ -46,10 +49,13 @@ class RolesView(BaseJWTResource):
 
 @namespace.route("/roles/<int:role_id>")
 class SpecificRolesView(BaseJWTResource):
-    @namespace.doc("change role", responses={
-        http.HTTPStatus.NOT_FOUND: "Not Found",
-        http.HTTPStatus.BAD_REQUEST: "Bad Request",
-    })
+    @namespace.doc(
+        "change role",
+        responses={
+            http.HTTPStatus.NOT_FOUND: "Not Found",
+            http.HTTPStatus.BAD_REQUEST: "Bad Request",
+        },
+    )
     @namespace.expect(role_parser)
     @namespace.marshal_with(admin_role_schema, code=http.HTTPStatus.OK)
     def patch(self, role_id: int):
@@ -68,11 +74,14 @@ class SpecificRolesView(BaseJWTResource):
 
         return role
 
-    @namespace.doc("delete role", responses={
-        http.HTTPStatus.NOT_FOUND: "Not Found",
-        http.HTTPStatus.BAD_REQUEST: "Bad Request",
-        http.HTTPStatus.NO_CONTENT: "No Content",
-    })
+    @namespace.doc(
+        "delete role",
+        responses={
+            http.HTTPStatus.NOT_FOUND: "Not Found",
+            http.HTTPStatus.BAD_REQUEST: "Bad Request",
+            http.HTTPStatus.NO_CONTENT: "No Content",
+        },
+    )
     def delete(self, role_id: int):
         role = Role.query.get_or_404(role_id)
 

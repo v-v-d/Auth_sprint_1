@@ -1,3 +1,5 @@
+from typing import Optional
+
 from gevent import monkey
 
 monkey.patch_all()
@@ -27,12 +29,16 @@ def runserver():
 
 
 @typer_app.command()
-def create_superuser():
+def create_superuser(
+    login: Optional[str] = typer.Argument(None),
+    password: Optional[str] = typer.Argument(None),
+) -> None:
+    if not login or password:
+        login = settings.ADMIN_LOGIN
+        password = settings.ADMIN_PASSWORD
+
     with session_scope():
-        user = user_datastore.create_user(
-            login=settings.ADMIN_LOGIN,
-            password=settings.ADMIN_PASSWORD,
-        )
+        user = user_datastore.create_user(login=login, password=password)
         user_datastore.add_role_to_user(user, DefaultRoleEnum.superuser.value)
 
 

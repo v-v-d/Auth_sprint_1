@@ -41,16 +41,18 @@ class AccountsService:
 
     def get_token_pair(self) -> tuple[str, str]:
         access_token = create_access_token(
-            identity=self.user, additional_claims={
+            identity=self.user,
+            additional_claims={
                 "is_admin": self.user.is_admin,
-            }
+            },
         )
 
         refresh_token_jti = str(uuid4())
         refresh_token = create_refresh_token(
-            identity=self.user, additional_claims={
+            identity=self.user,
+            additional_claims={
                 "jti": refresh_token_jti,
-            }
+            },
         )
 
         token_storage.set_refresh_token(refresh_token_jti, self.user.id)

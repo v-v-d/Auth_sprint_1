@@ -69,7 +69,9 @@ class RefreshView(Resource):
         account_service = AccountsService(current_user)
 
         try:
-            access_token, new_refresh_token = account_service.refresh_token_pair(get_jwt()["jti"])
+            access_token, new_refresh_token = account_service.refresh_token_pair(
+                get_jwt()["jti"]
+            )
         except TokenStorageError:
             raise exceptions.FailedDependency()
         except InvalidTokenError:

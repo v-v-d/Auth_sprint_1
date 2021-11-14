@@ -36,5 +36,9 @@ def init_jwt(app: Flask):
     jwt.init_app(app)
 
     app.config["JWT_SECRET_KEY"] = settings.JWT.SECRET_KEY
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=settings.JWT.ACCESS_TOKEN_EXPIRES)
-    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(seconds=settings.JWT.REFRESH_TOKEN_EXPIRES)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
+        seconds=settings.JWT.ACCESS_TOKEN_EXPIRES
+    )
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(
+        seconds=settings.JWT.REFRESH_TOKEN_EXPIRES
+    )

@@ -98,7 +98,6 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
 
     @property
     def is_admin(self) -> bool:
-        return (
-            self.has_role(DefaultRoleEnum.staff.value)
-            or self.has_role(DefaultRoleEnum.superuser.value)
+        return self.has_role(DefaultRoleEnum.staff.value) or self.has_role(
+            DefaultRoleEnum.superuser.value
         )
