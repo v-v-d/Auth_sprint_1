@@ -1,10 +1,22 @@
+import http
+
+from sqlalchemy.exc import IntegrityError
+from werkzeug import exceptions
+
+from app.api.admin import namespace
+from app.api.admin.parsers import role_list_parser, role_parser
+from app.api.admin.schemas import admin_role_schema
+from app.base import BaseJWTResource
+from app.database import session_scope
+from app.datastore import user_datastore
+from app.models import Role
 
 
-@admin_namespace.route("/roles")
+@namespace.route("/roles")
 class RolesView(BaseJWTResource):
-    @admin_namespace.doc("get list of roles")
-    @admin_namespace.expect(role_list_parser)
-    @admin_namespace.marshal_with(admin_role_schema, as_list=True, code=http.HTTPStatus.OK)
+    @namespace.doc("get list of roles")
+    @namespace.expect(role_list_parser)
+    @namespace.marshal_with(admin_role_schema, as_list=True, code=http.HTTPStatus.OK)
     def get(self):
         args = role_list_parser.parse_args()
         queryset = Role.query.order_by(Role.created_on.asc())
@@ -14,12 +26,12 @@ class RolesView(BaseJWTResource):
 
         return paginator.items
 
-    @admin_namespace.doc("create role", responses={
+    @namespace.doc("create role", responses={
         http.HTTPStatus.BAD_REQUEST: "Bad Request",
         http.HTTPStatus.CREATED: "Created",
     })
-    @admin_namespace.expect(role_parser)
-    @admin_namespace.marshal_with(admin_role_schema, code=http.HTTPStatus.CREATED)
+    @namespace.expect(role_parser)
+    @namespace.marshal_with(admin_role_schema, code=http.HTTPStatus.CREATED)
     def post(self):
         new_role = user_datastore.create_role(**role_parser.parse_args())
 
@@ -32,14 +44,14 @@ class RolesView(BaseJWTResource):
         return new_role, http.HTTPStatus.CREATED
 
 
-@admin_namespace.route("/roles/<int:role_id>")
+@namespace.route("/roles/<int:role_id>")
 class SpecificRolesView(BaseJWTResource):
-    @admin_namespace.doc("change role", responses={
+    @namespace.doc("change role", responses={
         http.HTTPStatus.NOT_FOUND: "Not Found",
         http.HTTPStatus.BAD_REQUEST: "Bad Request",
     })
-    @admin_namespace.expect(role_parser)
-    @admin_namespace.marshal_with(admin_role_schema, code=http.HTTPStatus.OK)
+    @namespace.expect(role_parser)
+    @namespace.marshal_with(admin_role_schema, code=http.HTTPStatus.OK)
     def patch(self, role_id: int):
         role = Role.query.get_or_404(role_id)
 
@@ -56,7 +68,7 @@ class SpecificRolesView(BaseJWTResource):
 
         return role
 
-    @admin_namespace.doc("delete role", responses={
+    @namespace.doc("delete role", responses={
         http.HTTPStatus.NOT_FOUND: "Not Found",
         http.HTTPStatus.BAD_REQUEST: "Bad Request",
         http.HTTPStatus.NO_CONTENT: "No Content",

@@ -1,7 +1,5 @@
 from gevent import monkey
 
-from app.models import DefaultRoleEnum
-
 monkey.patch_all()
 
 import typer
@@ -9,7 +7,9 @@ from IPython import embed
 from gevent.pywsgi import WSGIServer
 
 from app.database import session_scope
-from app.main import app, user_datastore
+from app.datastore import user_datastore
+from app.main import app
+from app.models import DefaultRoleEnum
 from app.settings import settings
 
 typer_app = typer.Typer()

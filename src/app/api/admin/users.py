@@ -1,17 +1,25 @@
-from app.api import BaseJWTResource
+import http
+
+from flask import jsonify
+
+from app.api.admin import namespace
+from app.base import BaseJWTResource
+from app.database import session_scope
+from app.datastore import user_datastore
+from app.models import User, Role
 
 
-@admin_namespace.route("/users/<int:user_id>/has-role/<string:role_name>")
+@namespace.route("/users/<int:user_id>/has-role/<string:role_name>")
 class CheckUserRoleView(BaseJWTResource):
-    @admin_namespace.doc("check if user has specific role")
+    @namespace.doc("check if user has specific role")
     def get(self, user_id: int, role_name: str):
         user = User.query.get_or_404(user_id)
         return jsonify(has_role=user.has_role(role_name))
 
 
-@admin_namespace.route("/users/<int:user_id>/set-role/<int:role_id>")
+@namespace.route("/users/<int:user_id>/set-role/<int:role_id>")
 class UserRoleView(BaseJWTResource):
-    @admin_namespace.doc("change user role", responses={
+    @namespace.doc("change user role", responses={
         http.HTTPStatus.NOT_FOUND: "Not Found",
     })
     def patch(self, user_id: int, role_id: int):

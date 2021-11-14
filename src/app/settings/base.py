@@ -64,6 +64,15 @@ class DatabaseSettings(BaseDSNSettings):
         env_prefix = "POSTGRES_"
 
 
+class JWTSettings(BaseSettings):
+    SECRET_KEY: str = "super-secret"
+    ACCESS_TOKEN_EXPIRES: int = 60
+    REFRESH_TOKEN_EXPIRES: int = 60 * 60 * 24 * 30  # 30 days
+
+    class Config:
+        env_prefix = "JWT_"
+
+
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
     ADMIN_LOGIN: str
@@ -78,7 +87,6 @@ class CommonSettings(BaseSettings):
     WSGI: WSGISettings = WSGISettings()
     REDIS: RedisSettings = RedisSettings()
     DB: DatabaseSettings = DatabaseSettings()
+    JWT: JWTSettings = JWTSettings()
 
-    JWT_ACCESS_TOKEN_EXPIRES: int = 60
-    JWT_REFRESH_TOKEN_EXPIRES: int = 60 * 60 * 24 * 30  # 30 days
     DEFAULT_PAGE_LIMIT: int = 5
