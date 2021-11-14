@@ -72,7 +72,7 @@ class DatabaseSettings(BaseDSNSettings):
 
 
 class JwtSettings(BaseSettings):
-    JWT_SECRET_KEY : str = "super-secret"
+    JWT_SECRET_KEY: str = "super-secret"
     JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=30)
 
