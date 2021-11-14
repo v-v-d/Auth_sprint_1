@@ -1,6 +1,6 @@
 from flask_security import UserMixin, RoleMixin
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from datetime import datetime
 from app.database import db
 
 
@@ -59,3 +59,38 @@ class User(TimestampMixin, db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self._password, password)
+
+
+class AuthHistory(db.Model):
+    __tablename__ = "auth_history"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column("user_id", db.Integer(), db.ForeignKey("users.id"))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    user_agent = db.Column(db.String(200), nullable=False)
+    ip_addr = db.Column(db.String(100), nullable=True)
+    device = db.relationship(
+        "Device",
+        secondary="content.device_users",
+        backref=db.backref("users", lazy="dynamic"),
+    )
+
+
+class DeviceAuth(TimestampMixin, db.Model):
+    __tablename__ = "device_auth"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    
+    def __str__(self):
+        return self.name
+    
+    
+class DeviceUsers(TimestampMixin, db.Model):
+    __tablename__ = "device_users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column("user_id", db.Integer(), db.ForeignKey("users.id"))
+    device = db.Column("device_id", db.Integer(), db.ForeignKey("device_aut.id"))
+
+    
