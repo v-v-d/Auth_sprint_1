@@ -10,6 +10,7 @@ def test_create_user(client):
 
     assert create_user.status_code == 200
 
+
 #
 # def test_create_token(client):
 #     create_token = client.post('api/v1/account/login', json={
