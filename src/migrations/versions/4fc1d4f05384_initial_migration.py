@@ -1,16 +1,18 @@
 """Initial migration.
 
-Revision ID: 259c4022c683
+Revision ID: 4fc1d4f05384
 Revises: 
-Create Date: 2021-11-06 10:48:21.753822
+Create Date: 2021-11-14 23:42:00.806684
 
 """
-from alembic import op
-import sqlalchemy as sa
+from uuid import uuid4
 
+import sqlalchemy as sa
+from alembic import op
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "259c4022c683"
+revision = "4fc1d4f05384"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,9 +31,11 @@ def upgrade():
         sa.Column(
             "updated_on", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("id", postgresql.UUID(as_uuid=True), default=uuid4, nullable=False),
         sa.Column("name", sa.String(length=80), nullable=True),
+        sa.Column("description", sa.String(length=255), nullable=True),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("id"),
         sa.UniqueConstraint("name"),
         schema="content",
     )
@@ -43,24 +47,23 @@ def upgrade():
         sa.Column(
             "updated_on", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("id", postgresql.UUID(as_uuid=True), default=uuid4, nullable=False),
         sa.Column("login", sa.String(length=80), nullable=False),
         sa.Column("email", sa.String(length=255), nullable=True),
         sa.Column("password", sa.String(length=255), nullable=False),
-        sa.Column("is_staff", sa.Boolean(), nullable=True),
         sa.Column("active", sa.Boolean(), nullable=True),
-        sa.Column("is_superuser", sa.Boolean(), nullable=True),
         sa.Column("last_login", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
+        sa.UniqueConstraint("id"),
         sa.UniqueConstraint("login"),
         schema="content",
     )
     op.create_table(
         "roles_users",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=True),
-        sa.Column("role_id", sa.Integer(), nullable=True),
+        sa.Column("id", sa.BigInteger(), nullable=False),
+        sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=True),
+        sa.Column("role_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.ForeignKeyConstraint(
             ["role_id"],
             ["content.roles.id"],
@@ -80,6 +83,6 @@ def downgrade():
     op.drop_table("roles_users", schema="content")
     op.drop_table("users", schema="content")
     op.drop_table("roles", schema="content")
+    # ### end Alembic commands ###
 
     op.execute("drop schema content")
-    # ### end Alembic commands ###

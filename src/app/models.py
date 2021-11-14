@@ -42,16 +42,17 @@ class TimestampMixin:
 class RolesUsers(db.Model):
     __tablename__ = "roles_users"
 
-    id = db.Column(db.Integer(), primary_key=True)  # TODO: Bigint
-    user_id = db.Column("user_id", db.Integer(), db.ForeignKey("users.id"))
-    role_id = db.Column("role_id", db.Integer(), db.ForeignKey("roles.id"))
+    id = db.Column(db.BigInteger(), primary_key=True)
+    user_id = db.Column("user_id", UUID(as_uuid=True), db.ForeignKey("users.id"))
+    role_id = db.Column("role_id", UUID(as_uuid=True), db.ForeignKey("roles.id"))
 
 
 class Role(TimestampMixin, db.Model, RoleMixin, MethodsExtensionMixin):
     __tablename__ = "roles"
 
-    id = db.Column(db.Integer(), primary_key=True)  # TODO: UUID
-    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    id = db.Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False
+    )
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
@@ -69,8 +70,9 @@ class Role(TimestampMixin, db.Model, RoleMixin, MethodsExtensionMixin):
 class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)  # TODO: UUID
-    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    id = db.Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False
+    )
     login = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True)
     _password = db.Column("password", db.String(255), nullable=False)

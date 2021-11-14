@@ -75,8 +75,8 @@ class JWTSettings(BaseSettings):
 
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
-    ADMIN_LOGIN: str
-    ADMIN_PASSWORD: str
+    DEFAULT_ADMIN_LOGIN: str
+    DEFAULT_ADMIN_PASSWORD: str
 
     DEBUG: bool = False
     TESTING: bool = False
