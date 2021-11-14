@@ -3,13 +3,12 @@ from flask import request
 from flask import jsonify
 
 from flask_restplus import Namespace, Resource, fields
-from flask_security import auth_required  # тут можно сделать сессию
 
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required, get_jwt
 
 from app.models import User
 from app.database import db
-from app.services.auth import auth_user
+from app.services.auth import auth_user, black_list, check_black_list
 from app.api.schemas import auth_schema
 
 
@@ -43,9 +42,9 @@ class SigUp(Resource):
             )
 
 
-@namespace.route('/login')
+@namespace.route('/refresh')
 class Login(Resource):
-    @namespace.doc('login')
+    @namespace.doc('refresh')
     @namespace.expect(auth_user_schema)
     def post(self):
         user = User.query.filter_by(login=request.json.get('login')).first()
@@ -59,13 +58,16 @@ class Login(Resource):
         )
 
 
-@namespace.route('/sigin')
-class SigIn(Resource):
-    @namespace.doc('sigin')
+@namespace.route('/signin')
+class SignIn(Resource):
+    @namespace.doc('sign_in')
     @jwt_required()
     def get(self):
-        user = get_jwt_identity()
-        return user
+        if not check_black_list(get_jwt()["jti"]):
+            user = get_jwt_identity()
+            return user
+        else:
+            return jsonify(message='Update the token please')
 
 
 @namespace.route('/edit_user')

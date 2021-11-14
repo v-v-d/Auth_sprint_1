@@ -9,7 +9,6 @@ from redis import StrictRedis
 class NamespaceEnum(str, Enum):
     black_list = "black_list"
     refresh_list = "refresh_list"
-    access_list = "access_list"
 
 
 class StorageError(Exception):
@@ -63,8 +62,3 @@ black_list_storage = RedisStorage(
 refresh_list_storage = RedisStorage(
     NamespaceEnum.refresh_list.value, settings.REDIS.REFRESH_LIST_TTL
 )
-
-access_list_storage = RedisStorage(
-    NamespaceEnum.access_list.value, settings.REDIS.ACCESS_LIST_TTL
-)
-
