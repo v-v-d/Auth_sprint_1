@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore, Security
 
@@ -12,6 +10,7 @@ from app.settings import settings
 
 app = Flask(settings.FLASK_APP)
 app.config["DEBUG"] = settings.DEBUG
+
 app.config["JWT_SECRET_KEY"] = settings.JWT.JWT_SECRET_KEY
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = settings.JWT.JWT_ACCESS_TOKEN_EXPIRES
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = settings.JWT.JWT_REFRESH_TOKEN_EXPIRES

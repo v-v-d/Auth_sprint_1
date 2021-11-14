@@ -22,6 +22,15 @@ def db_init():
         db.drop_all()
 
 
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+
+    with app.app_context():
+        with app.test_client() as client:
+            yield client
+
+
 @pytest.fixture(autouse=True)
 def mocked_redis(monkeypatch):
     faked_redis = FakeStrictRedis(decode_responses=True)

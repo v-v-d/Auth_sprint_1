@@ -38,9 +38,11 @@ class SigUp(Resource):
             )
             db.session.add(user)  # пометка, разобрать как убрать
             db.session.commit()
+            return jsonify(message='registered successfully')
         except:
-            return {'message': 'Failed to register. Check the correctness of the password and user fields'}
-        return {'message': 'registered successfully'}
+            return jsonify(
+                message='Failed to register. Check the correctness of the password and user fields'
+            )
 
 
 @namespace.route('/login')
