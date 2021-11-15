@@ -17,7 +17,7 @@ TEST_CONTAINER_SRC_DIR_PATH = Path("/code/tests/functional/testdata/elastic_src"
 @pytest.fixture(scope="session", autouse=True)
 def db_init():
     with app.app_context():
-        db.session.execute("ATTACH DATABASE ':memory:' AS content")
+        # db.session.execute("ATTACH DATABASE ':memory:' AS content")
         db.create_all()
         yield
         db.drop_all()

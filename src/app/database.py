@@ -14,7 +14,7 @@ migrate = Migrate()
 
 
 def init_db(app: Flask):
-    db_dsn = "sqlite:///:memory:" if settings.TESTING else settings.DB.DSN
+    db_dsn = f"{settings.DB.DSN}/test" if settings.TESTING else settings.DB.DSN
 
     app.config["SQLALCHEMY_DATABASE_URI"] = db_dsn
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from uuid import UUID
 
 from redis.client import StrictRedis, Pipeline
 
@@ -32,7 +33,7 @@ class RedisTokenStorage(AbstractTokenStorage):
     def __init__(self):
         self.redis: StrictRedis = redis_conn
 
-    def validate_refresh_token(self, refresh_token_jti: str, user_id: int) -> None:
+    def validate_refresh_token(self, refresh_token_jti: str, user_id: UUID) -> None:
         current_refresh_token_jti = self._execute(self.redis.get, name=user_id)
 
         if not current_refresh_token_jti:
@@ -47,13 +48,13 @@ class RedisTokenStorage(AbstractTokenStorage):
     def validate_access_token(self, access_token_jti: str) -> bool:
         return bool(self._execute(self.redis.exists, access_token_jti))
 
-    def invalidate_current_refresh_token(self, user_id: int) -> None:
+    def invalidate_current_refresh_token(self, user_id: UUID) -> None:
         self._execute(self.redis.delete, user_id)
 
-    def set_refresh_token(self, token_jti: str, user_id: int) -> None:
+    def set_refresh_token(self, token_jti: str, user_id: UUID) -> None:
         self._execute(self.redis.set, name=user_id, value=token_jti)
 
-    def invalidate_token_pair(self, access_token_jti: str, user_id: int) -> None:
+    def invalidate_token_pair(self, access_token_jti: str, user_id: UUID) -> None:
         def callback(pipe: Pipeline) -> None:
             pipe.set(
                 name=access_token_jti,

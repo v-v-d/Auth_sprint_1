@@ -10,7 +10,7 @@ from app.services.accounts import AccountsService
 from app.services.storages import TokenStorageError
 
 
-@namespace.route("/users/<int:user_id>/update-password")
+@namespace.route("/users/<uuid:user_id>/update-password")
 class UsersView(BaseJWTResource):
     @namespace.doc("update user password")
     @namespace.expect(user_password_parser)

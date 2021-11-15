@@ -47,7 +47,7 @@ class RolesView(BaseJWTResource):
         return new_role, http.HTTPStatus.CREATED
 
 
-@namespace.route("/roles/<int:role_id>")
+@namespace.route("/roles/<uuid:role_id>")
 class SpecificRolesView(BaseJWTResource):
     @namespace.doc(
         "change role",

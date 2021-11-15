@@ -14,3 +14,11 @@ services:
       - .env.sample
     environment:
       - TESTING=True
+
+  db:
+    image: postgres:13
+    container_name: auth-postgres
+    env_file:
+      - .env.sample
+    expose:
+      - "5432"

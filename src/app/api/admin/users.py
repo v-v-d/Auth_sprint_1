@@ -9,7 +9,7 @@ from app.datastore import user_datastore
 from app.models import User, Role
 
 
-@namespace.route("/users/<int:user_id>/has-role/<string:role_name>")
+@namespace.route("/users/<uuid:user_id>/has-role/<string:role_name>")
 class CheckUserRoleView(BaseJWTResource):
     @namespace.doc("check if user has specific role")
     def get(self, user_id: int, role_name: str):
@@ -17,7 +17,7 @@ class CheckUserRoleView(BaseJWTResource):
         return jsonify(has_role=user.has_role(role_name))
 
 
-@namespace.route("/users/<int:user_id>/set-role/<int:role_id>")
+@namespace.route("/users/<uuid:user_id>/set-role/<uuid:role_id>")
 class UserRoleView(BaseJWTResource):
     @namespace.doc(
         "change user role",
