@@ -34,6 +34,6 @@ def admin_jwt_pair(admin_user) -> tuple[str, str]:
 
 
 @pytest.fixture
-def admin_auth_header(admin_jwt_pair) -> dict[str, Any]:
+def admin_auth_header(admin_jwt_pair) -> dict[str, str]:
     access_token, _ = admin_jwt_pair
     return {"Authorization": f"Bearer {access_token}"}
