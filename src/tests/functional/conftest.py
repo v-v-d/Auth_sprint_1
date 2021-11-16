@@ -7,7 +7,7 @@ from app import redis
 from app.database import db, session_scope
 from app.datastore import user_datastore
 from app.main import app
-from app.models import Role
+from app.models import Role, DefaultRoleEnum
 from app.services import storages
 from app.settings import settings
 
@@ -40,6 +40,15 @@ def clear_db():
 def client():
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def default_user():
+    with session_scope():
+        user = user_datastore.create_user(login="test", password="test")
+        user_datastore.add_role_to_user(user, DefaultRoleEnum.guest.value)
+
+    return user
 
 
 @pytest.fixture(autouse=True)
