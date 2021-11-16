@@ -198,9 +198,7 @@ def test_logout_double_logout_with_the_same_access_token(
     assert response.json == {"msg": "Token has been revoked"}
 
 
-def test_refresh_ok(
-    client, default_user_jwt_pair, default_user_auth_refresh_header
-):
+def test_refresh_ok(client, default_user_jwt_pair, default_user_auth_refresh_header):
     response = client.post(
         path="/api/v1/refresh",
         headers=default_user_auth_refresh_header,
