@@ -40,14 +40,6 @@ def failed_token_storage(monkeypatch):
 
 
 @pytest.fixture
-def failed_account_service_logout(monkeypatch):
-    def mocked_return(*args, **kwargs):
-        raise TokenStorageError
-
-    monkeypatch.setattr(AccountsService, "logout", mocked_return)
-
-
-@pytest.fixture
 def failed_account_service_refresh(monkeypatch):
     def mocked_return(*args, **kwargs):
         raise TokenStorageError
@@ -65,7 +57,7 @@ def mocked_access_token_expires(monkeypatch):
 
 def test_signup_ok(client, login, password, expected_new_user):
     response = client.post(
-        path=f"/api/v1/signup",
+        path="/api/v1/signup",
         data={
             "login": login,
             "password": password,
@@ -80,7 +72,7 @@ def test_signup_ok(client, login, password, expected_new_user):
 
 def test_signup_user_already_exists(client, default_user, password):
     response = client.post(
-        path=f"/api/v1/signup",
+        path="/api/v1/signup",
         data={
             "login": default_user.login,
             "password": password,
@@ -91,7 +83,7 @@ def test_signup_user_already_exists(client, default_user, password):
 
 def test_signup_user_bad_body(client):
     response = client.post(
-        path=f"/api/v1/signup",
+        path="/api/v1/signup",
         data={
             "login": "test",
         },
@@ -101,7 +93,7 @@ def test_signup_user_bad_body(client):
 
 def test_login_ok(client, default_user, default_user_login, default_user_password):
     response = client.post(
-        path=f"/api/v1/login",
+        path="/api/v1/login",
         data={
             "login": default_user_login,
             "password": default_user_password,
@@ -122,7 +114,7 @@ def test_login_ok(client, default_user, default_user_login, default_user_passwor
 
 def test_login_user_doesnt_exists(client):
     response = client.post(
-        path=f"/api/v1/login",
+        path="/api/v1/login",
         data={
             "login": "test",
             "password": "test",
@@ -133,7 +125,7 @@ def test_login_user_doesnt_exists(client):
 
 def test_login_wrong_password(client, default_user, default_user_login):
     response = client.post(
-        path=f"/api/v1/login",
+        path="/api/v1/login",
         data={
             "login": default_user_login,
             "password": "wrong password",
@@ -150,7 +142,7 @@ def test_login_failed_token_storage(
     failed_token_storage,
 ):
     response = client.post(
-        path=f"/api/v1/login",
+        path="/api/v1/login",
         data={
             "login": default_user_login,
             "password": default_user_password,
@@ -161,7 +153,7 @@ def test_login_failed_token_storage(
 
 def test_logout_ok(client, default_user_auth_access_header):
     response = client.post(
-        path=f"/api/v1/logout",
+        path="/api/v1/logout",
         headers=default_user_auth_access_header,
     )
     assert response.status_code == http.HTTPStatus.OK
@@ -171,7 +163,7 @@ def test_logout_failed_token_storage(
     client, default_user_auth_access_header, failed_account_service_logout
 ):
     response = client.post(
-        path=f"/api/v1/logout",
+        path="/api/v1/logout",
         headers=default_user_auth_access_header,
     )
     assert response.status_code == http.HTTPStatus.FAILED_DEPENDENCY
@@ -181,7 +173,7 @@ def test_logout_access_token_expired(
     client, mocked_access_token_expires, default_user_auth_access_header
 ):
     response = client.post(
-        path=f"/api/v1/logout",
+        path="/api/v1/logout",
         headers=default_user_auth_access_header,
     )
 
@@ -193,13 +185,13 @@ def test_logout_double_logout_with_the_same_access_token(
     client, default_user_auth_access_header
 ):
     response = client.post(
-        path=f"/api/v1/logout",
+        path="/api/v1/logout",
         headers=default_user_auth_access_header,
     )
     assert response.status_code == http.HTTPStatus.OK
 
     response = client.post(
-        path=f"/api/v1/logout",
+        path="/api/v1/logout",
         headers=default_user_auth_access_header,
     )
     assert response.status_code == http.HTTPStatus.UNAUTHORIZED
@@ -210,7 +202,7 @@ def test_refresh_ok(
     client, default_user_jwt_pair, default_user_auth_refresh_header
 ):
     response = client.post(
-        path=f"/api/v1/refresh",
+        path="/api/v1/refresh",
         headers=default_user_auth_refresh_header,
     )
     assert response.status_code == http.HTTPStatus.OK
@@ -225,7 +217,7 @@ def test_refresh_failed_token_storage(
     client, default_user_auth_refresh_header, failed_account_service_refresh
 ):
     response = client.post(
-        path=f"/api/v1/refresh",
+        path="/api/v1/refresh",
         headers=default_user_auth_refresh_header,
     )
     assert response.status_code == http.HTTPStatus.FAILED_DEPENDENCY
@@ -235,19 +227,19 @@ def test_refresh_failed_with_reused_refresh_token(
     client, default_user_auth_refresh_header
 ):
     response = client.post(
-        path=f"/api/v1/refresh",
+        path="/api/v1/refresh",
         headers=default_user_auth_refresh_header,
     )
     assert response.status_code == http.HTTPStatus.OK
 
     response = client.post(
-        path=f"/api/v1/refresh",
+        path="/api/v1/refresh",
         headers=default_user_auth_refresh_header,
     )
     assert response.status_code == http.HTTPStatus.UNAUTHORIZED
 
     response = client.post(
-        path=f"/api/v1/refresh",
+        path="/api/v1/refresh",
         headers=default_user_auth_refresh_header,
     )
     assert response.status_code == http.HTTPStatus.UNAUTHORIZED

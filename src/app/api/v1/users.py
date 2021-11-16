@@ -15,9 +15,8 @@ class UsersView(BaseJWTResource):
     @namespace.doc("update user password")
     @namespace.expect(user_password_parser)
     def patch(self, user_id: int):
-        args = user_password_parser.parse_args()
-
         user = User.query.get_or_404(user_id)
+        args = user_password_parser.parse_args()
 
         if not user.check_password(args["old_password"]):
             raise exceptions.BadRequest()
