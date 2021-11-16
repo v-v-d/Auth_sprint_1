@@ -43,9 +43,21 @@ def client():
 
 
 @pytest.fixture
-def default_user():
+def default_user_login():
+    return "test"
+
+
+@pytest.fixture
+def default_user_password():
+    return "test"
+
+
+@pytest.fixture
+def default_user(default_user_login, default_user_password):
     with session_scope():
-        user = user_datastore.create_user(login="test", password="test")
+        user = user_datastore.create_user(
+            login=default_user_login, password=default_user_password
+        )
         user_datastore.add_role_to_user(user, DefaultRoleEnum.guest.value)
 
     return user

@@ -33,8 +33,6 @@ def check_if_token_is_revoked(jwt_header, jwt_payload):
 
 
 def init_jwt(app: Flask):
-    jwt.init_app(app)
-
     app.config["JWT_SECRET_KEY"] = settings.JWT.SECRET_KEY
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
         seconds=settings.JWT.ACCESS_TOKEN_EXPIRES
@@ -42,3 +40,5 @@ def init_jwt(app: Flask):
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(
         seconds=settings.JWT.REFRESH_TOKEN_EXPIRES
     )
+
+    jwt.init_app(app)

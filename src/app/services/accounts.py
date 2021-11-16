@@ -35,9 +35,7 @@ class AccountsService:
             token_storage.invalidate_current_refresh_token(self.user.id)
             raise
 
-        account_service = AccountsService(self.user)
-
-        return account_service.get_token_pair()
+        return self.get_token_pair()
 
     def get_token_pair(self) -> tuple[str, str]:
         access_token = create_access_token(

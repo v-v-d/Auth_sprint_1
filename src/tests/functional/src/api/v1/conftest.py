@@ -10,12 +10,12 @@ def default_user_jwt_pair(default_user) -> tuple[str, str]:
 
 
 @pytest.fixture
-def default_user_auth_access_header(user_jwt_pair) -> dict[str, str]:
-    access_token, _ = user_jwt_pair
+def default_user_auth_access_header(default_user_jwt_pair) -> dict[str, str]:
+    access_token, _ = default_user_jwt_pair
     return {"Authorization": f"Bearer {access_token}"}
 
 
 @pytest.fixture
-def default_user_auth_refresh_header(user_jwt_pair) -> dict[str, str]:
-    _, refresh_token = user_jwt_pair
+def default_user_auth_refresh_header(default_user_jwt_pair) -> dict[str, str]:
+    _, refresh_token = default_user_jwt_pair
     return {"Authorization": f"Bearer {refresh_token}"}

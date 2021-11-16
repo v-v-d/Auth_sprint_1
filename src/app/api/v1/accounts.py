@@ -46,7 +46,11 @@ class LoginView(Resource):
             raise exceptions.Unauthorized()
 
         account_service = AccountsService(user)
-        access_token, refresh_token = account_service.get_token_pair()
+
+        try:
+            access_token, refresh_token = account_service.get_token_pair()
+        except TokenStorageError:
+            raise exceptions.Unauthorized()
 
         return jsonify(access_token=access_token, refresh_token=refresh_token)
 
