@@ -100,4 +100,3 @@ def test_update_user_failed_token_storage(
 
     user = user_datastore.find_user(id=default_user.id)
     assert user.check_password(default_user_password)
-
