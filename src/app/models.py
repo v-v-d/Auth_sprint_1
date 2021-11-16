@@ -19,9 +19,7 @@ class MethodsExtensionMixin:
         is_updated = False
 
         for key, val in kwargs.items():
-            current_value = getattr(self, key, None)
-
-            if not current_value or current_value == val:
+            if not hasattr(self, key) or getattr(self, key, None) == val:
                 continue
 
             setattr(self, key, val)

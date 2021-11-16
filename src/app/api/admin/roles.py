@@ -61,9 +61,7 @@ class SpecificRolesView(BaseJWTResource):
     def patch(self, role_id: int):
         role = Role.query.get_or_404(role_id)
 
-        args = role_parser.parse_args()
-
-        if args["name"] in Role.Meta.PROTECTED_ROLE_NAMES:
+        if role.name in Role.Meta.PROTECTED_ROLE_NAMES:
             raise exceptions.BadRequest("This role is protected.")
 
         try:

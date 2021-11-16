@@ -36,7 +36,7 @@ sudo docker-compose up --build
 ### Тестирование
 Собрать тестовое окружение и запустить тесты
 ```shell
-sudo docker-compose -f docker-compose.test.yaml up --build
+sudo docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
 ```
 
 ### Миграции

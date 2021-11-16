@@ -2,7 +2,6 @@ from gevent import monkey
 
 monkey.patch_all()
 
-import sys
 from typing import Optional
 
 import typer
@@ -32,8 +31,8 @@ def runserver():
 
 @typer_app.command()
 def create_superuser(
-    login: Optional[str] = typer.Argument(None),
-    password: Optional[str] = typer.Argument(None),
+    login: Optional[str] = typer.Option(None),
+    password: Optional[str] = typer.Option(None),
 ) -> None:
     if not login:
         login = settings.DEFAULT_ADMIN_LOGIN
@@ -47,7 +46,7 @@ def create_superuser(
             user_datastore.add_role_to_user(user, DefaultRoleEnum.superuser.value)
     except IntegrityError:
         raise ValueError(
-            f"Failed to create superuser! User with this login {login} already exists.",
+            f"Failed to create superuser! User with login {login} already exists.",
         )
 
 

@@ -14,10 +14,11 @@ services:
       - .env.sample
     environment:
       - TESTING=True
+      - POSTGRES_HOST=test-auth-postgres
 
-  db:
+  test-db:
     image: postgres:13
-    container_name: auth-postgres
+    container_name: test-auth-postgres
     env_file:
       - .env.sample
     expose:

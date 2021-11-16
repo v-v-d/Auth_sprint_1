@@ -33,8 +33,6 @@ services:
       - ./src/migrations:/code/migrations
     env_file:
       - .env
-#    environment:
-#      - DEBUG=True
     networks:
       yandex:
 
@@ -43,8 +41,8 @@ services:
     container_name: auth-postgres
     env_file:
       - .env
-    ports:
-      - "9432:5432"
+    expose:
+      - "5432"
     volumes:
       - ./dbdata:/var/lib/postgresql/data
     networks:

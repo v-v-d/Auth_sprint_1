@@ -9,6 +9,7 @@ from uuid import uuid4
 
 import sqlalchemy as sa
 from alembic import op
+from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
@@ -74,6 +75,33 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id"),
         schema="content",
+    )
+
+    # find existing table
+    meta = MetaData(bind=op.get_bind())
+    meta.reflect(only=("roles",), schema="content")
+    roles_table = Table("roles", meta, schema="content")
+
+    # create default roles that needed for base permissions assigning
+    op.bulk_insert(
+        roles_table,
+        [
+            {
+                "id": str(uuid4()),
+                "name": "guest",
+                "description": "Designates that this user has basic permissions.",
+            },
+            {
+                "id": str(uuid4()),
+                "name": "superuser",
+                "description": "Designates that this user has all permissions without explicitly assigning them.",
+            },
+            {
+                "id": str(uuid4()),
+                "name": "staff",
+                "description": "Designates whether this user can access the admin service.",
+            },
+        ],
     )
     # ### end Alembic commands ###
 
