@@ -1,7 +1,3 @@
-import datetime
-
-from datetime import timedelta
-
 from pathlib import Path
 
 from pydantic import BaseSettings, AnyUrl, validator, RedisDsn, PostgresDsn
@@ -52,9 +48,6 @@ class BaseDSNSettings(BaseSettings):
 class RedisSettings(BaseDSNSettings):
     HOST: str = "api-redis"
     PORT: int = 6379
-    BLACK_LIST_TTL: int = 60 * 5
-    REFRESH_LIST_TTL: int = 60 * 5
-    ACCESS_LIST_TTL: int = 60 * 3
     PROTOCOL: str = "redis"
     DSN: RedisDsn = None
 
@@ -71,16 +64,19 @@ class DatabaseSettings(BaseDSNSettings):
         env_prefix = "POSTGRES_"
 
 
-class JwtSettings(BaseSettings):
-    JWT_SECRET_KEY : str = "super-secret"
-    JWT_ACCESS_TOKEN_EXPIRES: timedelta = timedelta(hours=1)
-    JWT_REFRESH_TOKEN_EXPIRES: timedelta = timedelta(days=30)
+class JWTSettings(BaseSettings):
+    JWT_SECRET_KEY: str = "super-secret"
+    JWT_ACCESS_TOKEN_EXPIRES: int = 60
+    JWT_REFRESH_TOKEN_EXPIRES: int = 60 * 60 * 24 * 30  # 30 days
+
+    class Config:
+        env_prefix = "JWT_"
 
 
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
-    ADMIN_LOGIN: str
-    ADMIN_PASSWORD: str
+    DEFAULT_ADMIN_LOGIN: str
+    DEFAULT_ADMIN_PASSWORD: str
 
     DEBUG: bool = False
     TESTING: bool = False
@@ -91,5 +87,6 @@ class CommonSettings(BaseSettings):
     WSGI: WSGISettings = WSGISettings()
     REDIS: RedisSettings = RedisSettings()
     DB: DatabaseSettings = DatabaseSettings()
+    JWT: JWTSettings = JWTSettings()
 
-    JWT: JwtSettings = JwtSettings()
+    DEFAULT_PAGE_LIMIT: int = 5
