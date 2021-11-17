@@ -36,7 +36,7 @@ class AccountsService:
                 user_id=user.id,
                 user_agent=user_agent.string,
                 ip_addr=ip_addr,
-                device=device
+                device=device,
             )
             db.session.add(history)
             user.last_login = datetime.utcnow()  # решил оставить

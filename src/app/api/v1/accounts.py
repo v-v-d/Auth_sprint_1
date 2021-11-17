@@ -39,15 +39,12 @@ class LoginView(Resource):
     @namespace.doc("login")
     @namespace.expect(login_parser)
     def post(self):
-        user_agent = UserAgent(request.headers.get('User-Agent'))
+        user_agent = UserAgent(request.headers.get("User-Agent"))
         args = login_parser.parse_args()
 
         try:
             user = AccountsService.get_authorized_user(
-                args["login"],
-                args["password"],
-                user_agent,
-                request.remote_addr
+                args["login"], args["password"], user_agent, request.remote_addr
             )
         except AccountsServiceError:
             raise exceptions.Unauthorized()

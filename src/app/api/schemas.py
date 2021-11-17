@@ -10,8 +10,6 @@ user_schema = {
 
 
 auth_schema = {
-    'login': fields.String(required=True),
-    'password': fields.String(required=True),
+    "login": fields.String(required=True),
+    "password": fields.String(required=True),
 }
-
-
