@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_restplus import Api
 
-from app.api import admin, v1
+from app.api.admin import namespace as admin_namespace
+from app.api.v1 import namespace as api_v1_namespace
 
 api = Api(
     title="Auth API",
@@ -9,8 +10,8 @@ api = Api(
     description="Auth API operations",
 )
 
-api.add_namespace(admin.auth.namespace)
-api.add_namespace(v1.auth.namespace)
+api.add_namespace(admin_namespace)
+api.add_namespace(api_v1_namespace)
 
 
 def init_api(app: Flask):

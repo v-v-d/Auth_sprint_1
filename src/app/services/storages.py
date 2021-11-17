@@ -1,64 +1,76 @@
-from typing import Any, Union
-from app.settings import settings
-from app.redis import redis_conn
 from abc import ABC, abstractmethod
-from enum import Enum
-from redis import StrictRedis
+from uuid import UUID
+
+from redis.client import StrictRedis, Pipeline
+
+from app.redis import redis_conn
+from app.settings import settings
 
 
-class NamespaceEnum(str, Enum):
-    black_list = "black_list"
-    refresh_list = "refresh_list"
-
-
-class StorageError(Exception):
+class TokenStorageError(Exception):
     pass
 
 
-class AbstractStorage(ABC):  # pragma: no cover
+class InvalidTokenError(Exception):
+    pass
+
+
+class AbstractTokenStorage(ABC):  # pragma: no cover
     @abstractmethod
-    def add(self, key: str) -> None:
+    def validate_refresh_token(self, refresh_token: str, user_id: int) -> bool:
         pass
 
     @abstractmethod
-    def get(self, key: str) -> None:
+    def invalidate_current_refresh_token(self, user_id: int) -> None:
         pass
 
     @abstractmethod
-    def check(self, key: str) -> bool:
+    def set_refresh_token(self, new_refresh_token: str, user_id: int) -> None:
         pass
 
 
-class RedisStorage(AbstractStorage):
-    def __init__(self, namespace: NamespaceEnum, ttl: int) -> None:
+class RedisTokenStorage(AbstractTokenStorage):
+    def __init__(self):
         self.redis: StrictRedis = redis_conn
-        self.namespace = namespace
-        self.ttl = ttl
 
-    def add(self, key: str, value: Any = "") -> None:
-        key = self._build_key(key)
+    def validate_refresh_token(self, refresh_token_jti: str, user_id: UUID) -> None:
+        current_refresh_token_jti = self._execute(self.redis.get, name=str(user_id))
+
+        if not current_refresh_token_jti:
+            # Reuse was previously detected and token was invalidated
+            raise InvalidTokenError
+
+        if current_refresh_token_jti != refresh_token_jti:
+            raise InvalidTokenError
+
+        return
+
+    def validate_access_token(self, access_token_jti: str) -> bool:
+        return bool(self._execute(self.redis.exists, access_token_jti))
+
+    def invalidate_current_refresh_token(self, user_id: UUID) -> None:
+        self._execute(self.redis.delete, str(user_id))
+
+    def set_refresh_token(self, token_jti: str, user_id: UUID) -> None:
+        self._execute(self.redis.set, name=str(user_id), value=token_jti)
+
+    def invalidate_token_pair(self, access_token_jti: str, user_id: UUID) -> None:
+        def callback(pipe: Pipeline) -> None:
+            pipe.set(
+                name=access_token_jti,
+                value=str(user_id),
+                ex=settings.JWT.ACCESS_TOKEN_EXPIRES,
+            )
+            pipe.delete(str(user_id))
+
+        self._execute(self.redis.transaction, func=callback)
+
+    @staticmethod
+    def _execute(method, *args, **kwargs):
         try:
-            return self.redis.set(name=key, value=value, ex=self.ttl)
+            return method(*args, **kwargs)
         except Exception as err:
-            raise StorageError from err
-
-    def get(self, key: str) -> Union[None, str]:
-        key = self._build_key(key)
-        try:
-            return self.redis.get(name=key)
-        except Exception as err:
-            raise StorageError from err
-
-    def check(self, key: str) -> bool:
-        return self.get(key) is not None
-
-    def _build_key(self, key: str) -> str:
-        return f"{self.namespace}:{key}"
+            raise TokenStorageError from err
 
 
-black_list_storage = RedisStorage(
-    NamespaceEnum.black_list.value, settings.REDIS.BLACK_LIST_TTL
-)
-refresh_list_storage = RedisStorage(
-    NamespaceEnum.refresh_list.value, settings.REDIS.REFRESH_LIST_TTL
-)
+token_storage = RedisTokenStorage()

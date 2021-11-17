@@ -48,8 +48,6 @@ class BaseDSNSettings(BaseSettings):
 class RedisSettings(BaseDSNSettings):
     HOST: str = "api-redis"
     PORT: int = 6379
-    BLACK_LIST_TTL: int = 60 * 5
-    REFRESH_LIST_TTL: int = 60 * 5
     PROTOCOL: str = "redis"
     DSN: RedisDsn = None
 
@@ -66,10 +64,19 @@ class DatabaseSettings(BaseDSNSettings):
         env_prefix = "POSTGRES_"
 
 
+class JWTSettings(BaseSettings):
+    SECRET_KEY: str = "super-secret"
+    ACCESS_TOKEN_EXPIRES: int = 60
+    REFRESH_TOKEN_EXPIRES: int = 60 * 60 * 24 * 30  # 30 days
+
+    class Config:
+        env_prefix = "JWT_"
+
+
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
-    ADMIN_LOGIN: str
-    ADMIN_PASSWORD: str
+    DEFAULT_ADMIN_LOGIN: str
+    DEFAULT_ADMIN_PASSWORD: str
 
     DEBUG: bool = False
     TESTING: bool = False
@@ -80,3 +87,6 @@ class CommonSettings(BaseSettings):
     WSGI: WSGISettings = WSGISettings()
     REDIS: RedisSettings = RedisSettings()
     DB: DatabaseSettings = DatabaseSettings()
+    JWT: JWTSettings = JWTSettings()
+
+    DEFAULT_PAGE_LIMIT: int = 5

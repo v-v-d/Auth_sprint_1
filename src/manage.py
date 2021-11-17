@@ -2,12 +2,17 @@ from gevent import monkey
 
 monkey.patch_all()
 
+from typing import Optional
+
 import typer
 from IPython import embed
 from gevent.pywsgi import WSGIServer
+from sqlalchemy.exc import IntegrityError
 
 from app.database import session_scope
-from app.main import app, user_datastore
+from app.datastore import user_datastore
+from app.main import app
+from app.models import DefaultRoleEnum
 from app.settings import settings
 
 typer_app = typer.Typer()
@@ -25,12 +30,23 @@ def runserver():
 
 
 @typer_app.command()
-def create_superuser():
-    with session_scope():
-        user_datastore.create_user(
-            login=settings.ADMIN_LOGIN,
-            password=settings.ADMIN_PASSWORD,
-            is_superuser=True,
+def create_superuser(
+    login: Optional[str] = typer.Option(None),
+    password: Optional[str] = typer.Option(None),
+) -> None:
+    if not login:
+        login = settings.DEFAULT_ADMIN_LOGIN
+
+    if not password:
+        password = settings.DEFAULT_ADMIN_PASSWORD
+
+    try:
+        with session_scope():
+            user = user_datastore.create_user(login=login, password=password)
+            user_datastore.add_role_to_user(user, DefaultRoleEnum.superuser.value)
+    except IntegrityError:
+        raise ValueError(
+            f"Failed to create superuser! User with login {login} already exists.",
         )
 
 
