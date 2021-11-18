@@ -1,10 +1,10 @@
 import http
 
-from flask import jsonify
+from flask import jsonify, request
 from flask_jwt_extended import get_jwt, current_user, jwt_required
 from flask_restplus import Resource
 from sqlalchemy.exc import IntegrityError
-from werkzeug import exceptions
+from werkzeug import exceptions, UserAgent
 
 from app.api.v1 import namespace
 from app.api.v1.parsers import signup_parser, login_parser
@@ -38,10 +38,16 @@ class LoginView(Resource):
     @namespace.doc("login")
     @namespace.expect(login_parser)
     def post(self):
+        user_agent = UserAgent(request.headers.get('User-Agent'))
         args = login_parser.parse_args()
 
         try:
-            user = AccountsService.get_authorized_user(args["login"], args["password"])
+            user = AccountsService.get_authorized_user(
+                args["login"],
+                args["password"],
+                user_agent,
+                request.remote_addr
+            )
         except AccountsServiceError:
             raise exceptions.Unauthorized()
 

@@ -3,8 +3,8 @@ from uuid import uuid4
 
 from flask_jwt_extended import create_access_token, create_refresh_token
 
-from app.database import session_scope
-from app.models import User
+from app.database import session_scope, db
+from app.models import User, AuthHistory
 from app.services.storages import token_storage, InvalidTokenError
 
 
@@ -17,14 +17,29 @@ class AccountsService:
         self.user = user
 
     @staticmethod
-    def get_authorized_user(login: str, password: str) -> User:
+    def get_authorized_user(login: str, password: str, user_agent, ip_addr) -> User:
         user = User.query.filter_by(login=login).one_or_none()
 
         if not user or not user.check_password(password):
             raise AccountsServiceError
 
+        if user_agent.platform:
+            device = user_agent.platform
+        elif user_agent.browser:
+            device = user_agent.browser
+        else:
+            device = user_agent.string
+
         with session_scope():
-            user.last_login = datetime.utcnow()
+
+            history = AuthHistory(
+                user_id=user.id,
+                user_agent=user_agent.string,
+                ip_addr=ip_addr,
+                device=device
+            )
+            db.session.add(history)
+            user.last_login = datetime.utcnow()  # решил оставить
 
         return user
 
