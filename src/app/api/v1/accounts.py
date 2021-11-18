@@ -38,7 +38,7 @@ class LoginView(Resource):
     @namespace.doc("login")
     @namespace.expect(login_parser)
     def post(self):
-        user_agent = UserAgent(request.headers.get('User-Agent'))
+        user_agent = UserAgent(request.headers.get("User-Agent"))
         args = login_parser.parse_args()
 
         try:
@@ -50,9 +50,7 @@ class LoginView(Resource):
             raise exceptions.Unauthorized()
 
         AccountsService.record_entry_time(
-            user_id=user.id,
-            user_agent=user_agent,
-            ip_addr=request.remote_addr
+            user_id=user.id, user_agent=user_agent, ip_addr=request.remote_addr
         )
 
         account_service = AccountsService(user)

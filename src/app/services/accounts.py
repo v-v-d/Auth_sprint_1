@@ -64,7 +64,9 @@ class AccountsService:
                 user_id=user_id,
                 user_agent=user_agent.string,
                 ip_addr=ip_addr,
-                device=user_agent.platform if user_agent.platform else user_agent.string
+                device=user_agent.platform
+                if user_agent.platform
+                else user_agent.string,
             )
             db.session.add(history)
 
