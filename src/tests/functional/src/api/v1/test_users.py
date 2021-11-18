@@ -1,7 +1,37 @@
 import http
+import pytest
 from uuid import uuid4
 
+from unittest.mock import ANY
+
 from app.datastore import user_datastore
+
+
+@pytest.fixture
+def expected_user_history_list(default_user):
+    return [
+        {
+            "id": ANY,
+            "user_id": str(default_user.id),
+            "user_agent": 'curl/',
+            "ip_addr": '127.0.0.25',
+            "device": 'Telefunken',
+        },
+        {
+            "id": ANY,
+            "user_id": str(default_user.id),
+            "user_agent": 'Mozilla/5.0 (X11; Linux x86_64)',
+            "ip_addr": '127.0.0.1',
+            "device": 'apple',
+        },
+        {
+            "id": ANY,
+            "user_id": str(default_user.id),
+            "user_agent": 'curl/',
+            "ip_addr": '127.0.0.25',
+            "device": 'Telefunken',
+        },
+    ]
 
 
 def test_update_password_ok(
@@ -100,3 +130,18 @@ def test_update_user_failed_token_storage(
 
     user = user_datastore.find_user(id=default_user.id)
     assert user.check_password(default_user_password)
+
+
+def test_user_history_list_ok(
+        client,
+        default_user,
+        default_user_password,
+        default_user_auth_access_header,
+        expected_user_history_list):
+    response = client.get(path=f"/api/v1/users/{default_user.id}/history",
+                          headers=default_user_auth_access_header)
+    assert response.status_code == http.HTTPStatus.OK
+    #
+    # result = response.json
+    # assert len(result) == len(expected_user_history_list)
+    # assert result == expected_user_history_list

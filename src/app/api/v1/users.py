@@ -1,11 +1,14 @@
+import http
+
 from flask_jwt_extended import get_jwt
 from werkzeug import exceptions
 
 from app.api.v1 import namespace
-from app.api.v1.parsers import user_password_parser
+from app.api.v1.parsers import user_password_parser, user_history_parser
+from app.api.v1.schemas import user_history_schema
 from app.base import BaseJWTResource
 from app.database import session_scope
-from app.models import User
+from app.models import User, AuthHistory
 from app.services.accounts import AccountsService
 from app.services.storages import TokenStorageError
 
@@ -27,3 +30,18 @@ class UsersView(BaseJWTResource):
                 AccountsService.logout(get_jwt()["jti"], user.id)
         except TokenStorageError:
             raise exceptions.FailedDependency()
+
+
+@namespace.route("/users/<uuid:user_id>/history")
+class RolesView(BaseJWTResource):
+    @namespace.doc("get list of user history")
+    @namespace.expect(user_history_parser)
+    @namespace.marshal_with(user_history_schema, as_list=True, code=http.HTTPStatus.OK)
+    def get(self, user_id):
+        args = user_history_parser.parse_args()
+        queryset = AuthHistory.query.order_by(AuthHistory.timestamp.asc())
+        paginator = queryset.paginate(
+            page=args["page"], per_page=args["per_page"], error_out=False
+        )
+
+        return paginator.items

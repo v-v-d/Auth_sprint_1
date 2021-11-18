@@ -9,6 +9,7 @@ from app.datastore import user_datastore
 from app.main import app
 from app.services.accounts import AccountsService
 from app.services.storages import token_storage, TokenStorageError
+from app.models import AuthHistory
 
 
 @pytest.fixture
