@@ -17,29 +17,14 @@ class AccountsService:
         self.user = user
 
     @staticmethod
-    def get_authorized_user(login: str, password: str, user_agent, ip_addr) -> User:
+    def get_authorized_user(login: str, password: str) -> User:
         user = User.query.filter_by(login=login).one_or_none()
 
         if not user or not user.check_password(password):
             raise AccountsServiceError
 
-        if user_agent.platform:
-            device = user_agent.platform
-        elif user_agent.browser:
-            device = user_agent.browser
-        else:
-            device = user_agent.string
-
         with session_scope():
-
-            history = AuthHistory(
-                user_id=user.id,
-                user_agent=user_agent.string,
-                ip_addr=ip_addr,
-                device=device
-            )
-            db.session.add(history)
-            user.last_login = datetime.utcnow()  # решил оставить
+            user.last_login = datetime.utcnow()
 
         return user
 
@@ -71,6 +56,17 @@ class AccountsService:
         token_storage.set_refresh_token(refresh_token_jti, self.user.id)
 
         return access_token, refresh_token
+
+    @staticmethod
+    def record_entry_time(user_id: str, user_agent: any, ip_addr: str) -> None:
+        with session_scope():
+            history = AuthHistory(
+                user_id=user_id,
+                user_agent=user_agent.string,
+                ip_addr=ip_addr,
+                device=user_agent.platform if user_agent.platform else user_agent.string
+            )
+            db.session.add(history)
 
     @staticmethod
     def logout(access_token_jti: str, user_id: int) -> None:

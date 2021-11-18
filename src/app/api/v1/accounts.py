@@ -45,11 +45,15 @@ class LoginView(Resource):
             user = AccountsService.get_authorized_user(
                 args["login"],
                 args["password"],
-                user_agent,
-                request.remote_addr
             )
         except AccountsServiceError:
             raise exceptions.Unauthorized()
+
+        AccountsService.record_entry_time(
+            user_id=user.id,
+            user_agent=user_agent,
+            ip_addr=request.remote_addr
+        )
 
         account_service = AccountsService(user)
 

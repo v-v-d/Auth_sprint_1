@@ -106,9 +106,9 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
 class AuthHistory(db.Model):
     __tablename__ = "auth_history"
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column("user_id", db.Integer(), db.ForeignKey("users.id"))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    user_agent = db.Column(db.String(200), nullable=False)
+    id = db.Column(db.BigInteger, primary_key=True)
+    user_id = db.Column("user_id", UUID(as_uuid=True), db.ForeignKey("users.id"))
+    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+    user_agent = db.Column(db.Text, nullable=False)
     ip_addr = db.Column(db.String(100), nullable=False)
     device = db.Column(db.Text, nullable=False)
