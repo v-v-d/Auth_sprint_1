@@ -26,8 +26,8 @@ def upgrade():
             "timestamp", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("user_agent", sa.Text(), nullable=False),
-        sa.Column("ip_addr", sa.String(length=100), nullable=False),
-        sa.Column("device", sa.Text(), nullable=False),
+        sa.Column("ip_addr", sa.String(length=100)),
+        sa.Column("device", sa.Text()),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["content.users.id"],

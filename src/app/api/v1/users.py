@@ -39,7 +39,9 @@ class UserHistoryView(BaseJWTResource):
     @namespace.marshal_with(user_history_schema, as_list=True, code=http.HTTPStatus.OK)
     def get(self, user_id):
         args = user_history_parser.parse_args()
-        queryset = AuthHistory.query.order_by(AuthHistory.timestamp.asc())
+        queryset = AuthHistory.query.filter_by(user_id=user_id).order_by(
+            AuthHistory.timestamp.asc()
+        )
         paginator = queryset.paginate(
             page=args["page"], per_page=args["per_page"], error_out=False
         )

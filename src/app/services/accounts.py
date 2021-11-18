@@ -1,7 +1,9 @@
 from datetime import datetime
 from uuid import uuid4
 
+from flask import Request
 from flask_jwt_extended import create_access_token, create_refresh_token
+from werkzeug.useragents import UserAgent
 
 from app.database import session_scope, db
 from app.models import User, AuthHistory
@@ -57,16 +59,16 @@ class AccountsService:
 
         return access_token, refresh_token
 
-    @staticmethod
-    def record_entry_time(user_id: str, user_agent: any, ip_addr: str) -> None:
+    def record_entry_time(self, request: Request) -> None:
+        user_agent = UserAgent(request.headers.get("User-Agent"))
+        ip_addr = request.remote_addr
+
         with session_scope():
             history = AuthHistory(
-                user_id=user_id,
+                user_id=self.user.id,
                 user_agent=user_agent.string,
                 ip_addr=ip_addr,
-                device=user_agent.platform
-                if user_agent.platform
-                else user_agent.string,
+                device=user_agent.platform,
             )
             db.session.add(history)
 

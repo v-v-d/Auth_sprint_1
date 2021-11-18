@@ -1,8 +1,8 @@
 import http
-import pytest
+from unittest.mock import ANY
 from uuid import uuid4
 
-from unittest.mock import ANY
+import pytest
 
 from app.database import session_scope
 from app.datastore import user_datastore
@@ -10,36 +10,61 @@ from app.models import AuthHistory
 
 
 @pytest.fixture
-def expected_user_history_list(default_user):
+def expected_user_history_list():
     return [
         {
             "id": ANY,
-            "user_id": str(default_user.id),
-            "user_agent": "curl/",
+            "timestamp": ANY,
+            "user_agent": "Mozilla/5.0 (X11; Linux x86_64)",
             "ip_addr": "127.0.0.25",
             "device": "Telefunken",
         },
         {
             "id": ANY,
-            "user_id": str(default_user.id),
+            "timestamp": ANY,
             "user_agent": "Mozilla/5.0 (X11; Linux x86_64)",
-            "ip_addr": "127.0.0.1",
-            "device": "apple",
+            "ip_addr": "127.0.0.25",
+            "device": "Telefunken",
         },
         {
             "id": ANY,
-            "user_id": str(default_user.id),
-            "user_agent": "curl/",
+            "timestamp": ANY,
+            "user_agent": "Mozilla/5.0 (X11; Linux x86_64)",
             "ip_addr": "127.0.0.25",
             "device": "Telefunken",
         },
     ]
 
 
-# @pytest.fixture
-# def create_auth_history(expected_user_history_list):
-#     with session_scope() as session:
-#         session.bulk_insert_mappings(AuthHistory, expected_user_history_list)
+@pytest.fixture
+def random_user():
+    with session_scope():
+        return user_datastore.create_user(id=uuid4(), login="fake", password="fake")
+
+
+@pytest.fixture
+def create_auth_history(default_user, random_user):
+    expected_user_data = [
+        {
+            "user_id": str(default_user.id),
+            "user_agent": "Mozilla/5.0 (X11; Linux x86_64)",
+            "ip_addr": "127.0.0.25",
+            "device": "Telefunken",
+        }
+        for _ in range(1, 4)
+    ]
+    random_user_data = [
+        {
+            "user_id": str(random_user.id),
+            "user_agent": "Fake user agent",
+            "ip_addr": "127.0.0.24",
+            "device": "Apple",
+        }
+        for _ in range(1, 4)
+    ]
+    with session_scope() as session:
+        session.bulk_insert_mappings(AuthHistory, expected_user_data)
+        session.bulk_insert_mappings(AuthHistory, random_user_data)
 
 
 def test_update_password_ok(
@@ -146,6 +171,7 @@ def test_user_history_list_ok(
     default_user_password,
     default_user_auth_access_header,
     expected_user_history_list,
+    create_auth_history,
 ):
     response = client.get(
         path=f"/api/v1/users/{default_user.id}/history",
@@ -153,6 +179,6 @@ def test_user_history_list_ok(
     )
     assert response.status_code == http.HTTPStatus.OK
 
-    # result = response.json
-    # assert len(result) == len(expected_user_history_list)
-    # assert result == expected_user_history_list
+    result = response.json
+    assert len(result) == len(expected_user_history_list)
+    assert result == expected_user_history_list
