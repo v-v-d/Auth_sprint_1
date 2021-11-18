@@ -4,7 +4,9 @@ from uuid import uuid4
 
 from unittest.mock import ANY
 
+from app.database import session_scope
 from app.datastore import user_datastore
+from app.models import AuthHistory
 
 
 @pytest.fixture
@@ -32,6 +34,12 @@ def expected_user_history_list(default_user):
             "device": 'Telefunken',
         },
     ]
+
+
+# @pytest.fixture
+# def create_auth_history(expected_user_history_list):
+#     with session_scope() as session:
+#         session.bulk_insert_mappings(AuthHistory, expected_user_history_list)
 
 
 def test_update_password_ok(
@@ -141,7 +149,7 @@ def test_user_history_list_ok(
     response = client.get(path=f"/api/v1/users/{default_user.id}/history",
                           headers=default_user_auth_access_header)
     assert response.status_code == http.HTTPStatus.OK
-    #
+
     # result = response.json
     # assert len(result) == len(expected_user_history_list)
     # assert result == expected_user_history_list

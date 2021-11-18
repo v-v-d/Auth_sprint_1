@@ -33,7 +33,7 @@ class UsersView(BaseJWTResource):
 
 
 @namespace.route("/users/<uuid:user_id>/history")
-class RolesView(BaseJWTResource):
+class UserHistoryView(BaseJWTResource):
     @namespace.doc("get list of user history")
     @namespace.expect(user_history_parser)
     @namespace.marshal_with(user_history_schema, as_list=True, code=http.HTTPStatus.OK)
