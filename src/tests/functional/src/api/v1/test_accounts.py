@@ -111,7 +111,7 @@ def test_login_ok(client, default_user, default_user_login, default_user_passwor
     assert user.last_login is not None
 
     assert len(token_storage.redis.execute_command("keys *")) > 0
-    
+
     login_history = AuthHistory.query.filter_by(user_id=user.id).first()
     assert login_history
 
