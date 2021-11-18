@@ -1,6 +1,6 @@
 import http
 
-from flask import jsonify
+from flask import jsonify, request
 from flask_jwt_extended import get_jwt, current_user, jwt_required
 from flask_restplus import Resource
 from sqlalchemy.exc import IntegrityError
@@ -41,11 +41,15 @@ class LoginView(Resource):
         args = login_parser.parse_args()
 
         try:
-            user = AccountsService.get_authorized_user(args["login"], args["password"])
+            user = AccountsService.get_authorized_user(
+                args["login"],
+                args["password"],
+            )
         except AccountsServiceError:
             raise exceptions.Unauthorized()
 
         account_service = AccountsService(user)
+        account_service.record_entry_time(request)
 
         try:
             access_token, refresh_token = account_service.get_token_pair()

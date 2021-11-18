@@ -101,3 +101,14 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
         return self.has_role(DefaultRoleEnum.staff.value) or self.has_role(
             DefaultRoleEnum.superuser.value
         )
+
+
+class AuthHistory(db.Model):
+    __tablename__ = "auth_history"
+
+    id = db.Column(db.BigInteger, primary_key=True)
+    user_id = db.Column("user_id", UUID(as_uuid=True), db.ForeignKey("users.id"))
+    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+    user_agent = db.Column(db.Text, nullable=False)
+    ip_addr = db.Column(db.String(100))
+    device = db.Column(db.Text)

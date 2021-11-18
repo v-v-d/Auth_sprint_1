@@ -19,3 +19,14 @@ signup_schema = namespace.model(
         "is_active": fields.Boolean(),
     },
 )
+
+user_history_schema = namespace.model(
+    "User_history",
+    {
+        "id": fields.Integer(),
+        "timestamp": fields.DateTime(),
+        "user_agent": fields.String(),
+        "ip_addr": fields.String(),
+        "device": fields.String(),
+    },
+)

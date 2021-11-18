@@ -9,6 +9,7 @@ from app.datastore import user_datastore
 from app.main import app
 from app.services.accounts import AccountsService
 from app.services.storages import token_storage, TokenStorageError
+from app.models import AuthHistory
 
 
 @pytest.fixture
@@ -110,6 +111,9 @@ def test_login_ok(client, default_user, default_user_login, default_user_passwor
     assert user.last_login is not None
 
     assert len(token_storage.redis.execute_command("keys *")) > 0
+
+    login_history = AuthHistory.query.filter_by(user_id=user.id).first()
+    assert login_history
 
 
 def test_login_user_doesnt_exists(client):
