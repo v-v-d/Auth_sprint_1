@@ -25,7 +25,9 @@ def shell():
 
 @typer_app.command()
 def runserver():
-    http_server = WSGIServer((settings.WSGI.HOST, settings.WSGI.PORT), app)
+    http_server = WSGIServer(
+        (settings.WSGI.HOST, settings.WSGI.PORT), app, spawn=settings.WSGI.workers
+    )
     http_server.serve_forever()
 
 

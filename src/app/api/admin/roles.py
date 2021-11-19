@@ -6,14 +6,14 @@ from werkzeug import exceptions
 from app.api.admin import namespace
 from app.api.admin.parsers import role_list_parser, role_parser
 from app.api.admin.schemas import admin_role_schema
-from app.base import BaseJWTResource
+from app.base import BaseJWTResource, BaseJWTCachedResource
 from app.database import session_scope
 from app.datastore import user_datastore
 from app.models import Role
 
 
 @namespace.route("/roles")
-class RolesView(BaseJWTResource):
+class RolesView(BaseJWTCachedResource):
     @namespace.doc("get list of roles")
     @namespace.expect(role_list_parser)
     @namespace.marshal_with(admin_role_schema, as_list=True, code=http.HTTPStatus.OK)

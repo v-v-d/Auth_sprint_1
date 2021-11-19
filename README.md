@@ -45,29 +45,29 @@
 ### Запуск
 1. Создать общую сеть для всех проектов практикума, чтобы была связь между всеми контейнерами курса
 ```shell
-sudo docker network create yandex
+docker network create yandex
 ```
 2. Собрать и запустить текущий проект
 ```shell
-sudo docker-compose up --build
+docker-compose up --build
 ```
 3. Перейти к документации по адресу 0.0.0.0
 
 ### Тестирование
 Собрать тестовое окружение и запустить тесты
 ```shell
-sudo docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
+docker-compose -f docker-compose.test.yaml up --build --exit-code-from sut
 ```
 
 ### Миграции
 Чтобы сгенерировать файлы миграций надо:
 1. Поднять проект
 ```shell
-sudo docker-compose up --build
+docker-compose up --build
 ```
 2. В соседнем терминале выполнить
 ```shell
-sudo docker exec -it auth-app flask db migrate -m "<Тут короткое текстовое описании миграции>"
+docker exec -it auth-app flask db migrate -m "<Тут короткое текстовое описании миграции>"
 ```
 
 

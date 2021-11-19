@@ -102,11 +102,17 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
             DefaultRoleEnum.superuser.value
         )
 
+    @property
+    def roles_names_list(self) -> list[str]:
+        return [role.name for role in self.roles]
+
 
 class AuthHistory(db.Model):
     __tablename__ = "auth_history"
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False
+    )
     user_id = db.Column("user_id", UUID(as_uuid=True), db.ForeignKey("users.id"))
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
     user_agent = db.Column(db.Text, nullable=False)
