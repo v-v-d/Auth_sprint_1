@@ -90,3 +90,4 @@ class CommonSettings(BaseSettings):
     JWT: JWTSettings = JWTSettings()
 
     DEFAULT_PAGE_LIMIT: int = 5
+    CACHE_DEFAULT_TIMEOUT: int = 60 * 60 * 3

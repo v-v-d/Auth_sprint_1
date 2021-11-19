@@ -11,9 +11,9 @@ login_schema = namespace.model(
 )
 
 signup_schema = namespace.model(
-    "Signup",
+    "SignUp",
     {
-        "id": fields.Integer(),
+        "id": fields.String(),
         "login": fields.String(),
         "email": fields.String(),
         "is_active": fields.Boolean(),
@@ -21,7 +21,7 @@ signup_schema = namespace.model(
 )
 
 user_history_schema = namespace.model(
-    "User_history",
+    "UserHistory",
     {
         "id": fields.Integer(),
         "timestamp": fields.DateTime(),

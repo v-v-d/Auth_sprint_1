@@ -5,7 +5,7 @@ from app.api.admin import namespace
 admin_role_schema = namespace.model(
     "Role",
     {
-        "id": fields.Integer(),
+        "id": fields.String(),
         "name": fields.String(),
         "description": fields.String(),
         "is_active": fields.Boolean(),
