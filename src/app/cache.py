@@ -1,4 +1,3 @@
-from enum import Enum
 from functools import wraps
 
 from flask import Flask
@@ -6,12 +5,6 @@ from flask_caching import Cache
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 
 from app.settings import settings
-
-
-class CacheNamespaceEnum(str, Enum):
-    user_roles = "user_roles"
-    roles_list = "roles_list"
-
 
 cache = Cache()
 
