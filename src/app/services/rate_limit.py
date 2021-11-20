@@ -8,14 +8,12 @@ from app.redis import redis_conn
 
 
 def rate_limit(max_calls=1000, period=59):
-
     def func_wrapper(func):
-
         @wraps(func)
         def inner(*args, **kwargs):
             pipe = redis_conn.pipeline()
             now = datetime.datetime.now()
-            key = f'{current_user}:{now.minute}'
+            key = f"{current_user}:{now.minute}"
 
             pipe.incr(key, 1)
             pipe.expire(key, period)
