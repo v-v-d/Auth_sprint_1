@@ -33,4 +33,6 @@ class BaseJWTAdminResource(Resource):
 
 
 class BaseJWTAdminCachedResource(Resource):
-    method_decorators = [] if settings.DEBUG else (jwt_required(), admin_required, cached)
+    method_decorators = (
+        [] if settings.DEBUG else (jwt_required(), admin_required, cached)
+    )
