@@ -11,6 +11,7 @@ from app.datastore import user_datastore
 from app.main import app
 from app.models import Role, DefaultRoleEnum
 from app.services import storages
+from app.services import rate_limit
 from app.services.accounts import AccountsService
 from app.settings import settings
 
@@ -90,6 +91,7 @@ def mocked_redis(monkeypatch):
     monkeypatch.setattr(redis, "redis_conn", faked_redis)
     monkeypatch.setattr(storages, "redis_conn", faked_redis)
     monkeypatch.setattr(storages.token_storage, "redis", faked_redis)
+    monkeypatch.setattr(rate_limit, "redis_conn", faked_redis)
 
 
 @pytest.fixture(autouse=True)

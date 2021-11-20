@@ -14,7 +14,7 @@ from app.services.rate_limit import rate_limit
 
 @namespace.route("/users/update-password")
 class UsersView(BaseJWTResource):
-    # @rate_limit()
+    @rate_limit()
     @namespace.doc("update user password")
     @namespace.expect(user_password_parser)
     def patch(self):
@@ -33,7 +33,7 @@ class UsersView(BaseJWTResource):
 
 @namespace.route("/users/history")
 class UserHistoryView(BaseJWTResource):
-    # @rate_limit()
+    @rate_limit()
     @namespace.doc("get list of user history")
     @namespace.expect(user_history_parser)
     @namespace.marshal_with(user_history_schema, as_list=True)

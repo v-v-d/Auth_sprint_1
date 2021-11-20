@@ -8,7 +8,7 @@ from app.services.rate_limit import rate_limit
 
 @namespace.route("/users/info")
 class UserInfoView(BaseJWTResource):
-    # @rate_limit()
+    @rate_limit()
     @namespace.doc("get user info")
     @namespace.marshal_with(user_info_schema)
     def get(self):
@@ -17,7 +17,7 @@ class UserInfoView(BaseJWTResource):
 
 @namespace.route("/users/roles")
 class UserRolesView(BaseJWTCachedResource):
-    # @rate_limit()
+    @rate_limit()
     @namespace.doc("get user roles")
     def get(self):
         return current_user.roles_names_list

@@ -7,7 +7,7 @@ from flask_jwt_extended import get_jwt, current_user
 from app.redis import redis_conn
 
 
-def rate_limit(max_calls=1000, period=59):
+def rate_limit(max_calls=20, period=59):
 
     def func_wrapper(func):
 
