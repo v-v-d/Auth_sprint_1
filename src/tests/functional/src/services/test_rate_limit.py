@@ -31,5 +31,4 @@ def test_rate_limit(
             headers=default_user_auth_access_header,
         )
 
-
     assert response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS

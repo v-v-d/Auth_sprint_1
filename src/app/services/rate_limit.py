@@ -26,8 +26,8 @@ def rate_limit(max_calls=20, period=59):
 
             if request_number > max_calls:
                 return Response(
-                    'Воу Воу, остановись, отдохни теперь минутку',
-                    http.HTTPStatus.TOO_MANY_REQUESTS
+                    "Воу Воу, остановись, отдохни теперь минутку",
+                    http.HTTPStatus.TOO_MANY_REQUESTS,
                 )
             else:
                 return func(*args, **kwargs)
