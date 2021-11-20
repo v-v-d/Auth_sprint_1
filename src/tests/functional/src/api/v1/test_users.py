@@ -73,11 +73,10 @@ def test_update_password_ok(
     default_user,
     default_user_auth_access_header,
 ):
-    user_id = str(default_user.id)
     new_password = "changed password"
 
     response = client.patch(
-        path=f"/api/v1/users/{user_id}/update-password",
+        path="/api/v1/users/update-password",
         headers=default_user_auth_access_header,
         data={
             "old_password": default_user_password,
@@ -91,7 +90,7 @@ def test_update_password_ok(
     assert user.check_password(new_password)
 
     response = client.patch(
-        path=f"/api/v1/users/{user_id}/update-password",
+        path="/api/v1/users/update-password",
         headers=default_user_auth_access_header,
         data={
             "old_password": default_user_password,
@@ -102,35 +101,13 @@ def test_update_password_ok(
     assert response.status_code == http.HTTPStatus.UNAUTHORIZED
 
 
-def test_update_user_doesnt_exists(
-    client,
-    default_user_password,
-    default_user,
-    default_user_auth_access_header,
-):
-    user_id = str(uuid4())
-
-    response = client.patch(
-        path=f"/api/v1/users/{user_id}/update-password",
-        headers=default_user_auth_access_header,
-        data={
-            "old_password": default_user_password,
-            "new_password": "changed password",
-        },
-    )
-
-    assert response.status_code == http.HTTPStatus.NOT_FOUND
-
-
 def test_update_user_wrong_old_password(
     client,
     default_user,
     default_user_auth_access_header,
 ):
-    user_id = str(default_user.id)
-
     response = client.patch(
-        path=f"/api/v1/users/{user_id}/update-password",
+        path="/api/v1/users/update-password",
         headers=default_user_auth_access_header,
         data={
             "old_password": "wrong_old_password",
@@ -148,10 +125,8 @@ def test_update_user_failed_token_storage(
     default_user_auth_access_header,
     failed_account_service_logout,
 ):
-    user_id = str(default_user.id)
-
     response = client.patch(
-        path=f"/api/v1/users/{user_id}/update-password",
+        path="/api/v1/users/update-password",
         headers=default_user_auth_access_header,
         data={
             "old_password": default_user_password,
@@ -167,14 +142,12 @@ def test_update_user_failed_token_storage(
 
 def test_user_history_list_ok(
     client,
-    default_user,
-    default_user_password,
     default_user_auth_access_header,
     expected_user_history_list,
     create_auth_history,
 ):
     response = client.get(
-        path=f"/api/v1/users/{default_user.id}/history",
+        path="/api/v1/users/history",
         headers=default_user_auth_access_header,
     )
     assert response.status_code == http.HTTPStatus.OK

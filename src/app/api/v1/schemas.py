@@ -23,7 +23,7 @@ signup_schema = namespace.model(
 user_history_schema = namespace.model(
     "UserHistory",
     {
-        "id": fields.Integer(),
+        "id": fields.String(),
         "timestamp": fields.DateTime(),
         "user_agent": fields.String(),
         "ip_addr": fields.String(),
