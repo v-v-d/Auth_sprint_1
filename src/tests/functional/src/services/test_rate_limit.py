@@ -20,20 +20,16 @@ def test_rate_limit(
     default_user_auth_access_header,
     expected_user_info,
 ):
-    # response = client.get(
-    #     path="/api/internal/v1/users/info",
-    #     headers=default_user_auth_access_header,
-    # )
-
-    for i in range(30):
-        client.get(
-            path="/api/internal/v1/users/info",
-            headers=default_user_auth_access_header,
-        )
-
     response = client.get(
         path="/api/internal/v1/users/info",
         headers=default_user_auth_access_header,
     )
+
+    for i in range(30):
+        response = client.get(
+            path="/api/internal/v1/users/info",
+            headers=default_user_auth_access_header,
+        )
+
 
     assert response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS
