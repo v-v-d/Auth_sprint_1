@@ -8,7 +8,6 @@ from app.redis import redis_conn
 
 
 def rate_limit(max_calls=20, period=59):
-
     def func_wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
