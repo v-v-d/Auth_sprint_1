@@ -32,7 +32,7 @@ class UsersView(BaseJWTResource):
                     AccountsService.logout(get_jwt()["jti"], user.id)
             except TokenStorageError:
                 raise exceptions.FailedDependency()
-            return jsonify(message='Ok')
+            return jsonify(message="Ok")
         return "You don't have enough rights"
 
 
@@ -42,7 +42,9 @@ class UserHistoryView(BaseJWTResource):
     @namespace.expect(user_history_parser)
     @namespace.marshal_with(user_history_schema, as_list=True, code=http.HTTPStatus.OK)
     def get(self, user_id):
-        if current_user == user_id:  # or User.query.get(current_user).role is 'superuser':
+        if (
+            current_user == user_id
+        ):  # or User.query.get(current_user).role is 'superuser':
             args = user_history_parser.parse_args()
             queryset = AuthHistory.query.filter_by(user_id=user_id).order_by(
                 AuthHistory.timestamp.asc()
