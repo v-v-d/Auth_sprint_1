@@ -2,7 +2,7 @@ from flask_jwt_extended import current_user
 
 from app.api.internal.v1 import namespace
 from app.api.internal.v1.schemas import user_info_schema
-from app.base import BaseJWTResource, BaseJWTCachedResource
+from app.api.base import BaseJWTResource, BaseJWTCachedResource
 
 
 @namespace.route("/users/info")

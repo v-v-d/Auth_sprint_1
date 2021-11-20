@@ -9,7 +9,7 @@ from werkzeug import exceptions
 from app.api.v1 import namespace
 from app.api.v1.parsers import signup_parser, login_parser
 from app.api.v1.schemas import signup_schema
-from app.base import BaseJWTResource
+from app.api.base import BaseJWTResource
 from app.database import session_scope
 from app.datastore import user_datastore
 from app.models import DefaultRoleEnum

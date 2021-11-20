@@ -6,7 +6,7 @@ from werkzeug import exceptions
 from app.api.admin import namespace
 from app.api.admin.parsers import role_list_parser, role_parser
 from app.api.admin.schemas import admin_role_schema
-from app.base import BaseJWTAdminCachedResource, BaseJWTAdminResource
+from app.api.base import BaseJWTAdminCachedResource, BaseJWTAdminResource
 from app.database import session_scope
 from app.datastore import user_datastore
 from app.models import Role

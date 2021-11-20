@@ -63,6 +63,11 @@ def test_list_ok(client, admin_auth_header, expected_roles_list):
     assert result == expected_roles_list
 
 
+def test_list_forbidden(client, default_user_auth_access_header):
+    response = client.get(path="/admin/roles", headers=default_user_auth_access_header)
+    assert response.status_code == http.HTTPStatus.FORBIDDEN
+
+
 def test_create_ok(client, admin_auth_header, expected_created_role):
     response = client.post(
         path="/admin/roles",

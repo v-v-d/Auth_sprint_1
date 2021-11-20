@@ -3,7 +3,7 @@ import http
 from flask import jsonify
 
 from app.api.admin import namespace
-from app.base import BaseJWTAdminResource
+from app.api.base import BaseJWTAdminResource
 from app.database import session_scope
 from app.datastore import user_datastore
 from app.models import User, Role

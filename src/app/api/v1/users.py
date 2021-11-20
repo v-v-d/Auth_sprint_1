@@ -4,9 +4,9 @@ from werkzeug import exceptions
 from app.api.v1 import namespace
 from app.api.v1.parsers import user_password_parser, user_history_parser
 from app.api.v1.schemas import user_history_schema
-from app.base import BaseJWTResource
+from app.api.base import BaseJWTResource
 from app.database import session_scope
-from app.models import User, AuthHistory
+from app.models import AuthHistory
 from app.services.accounts import AccountsService
 from app.services.storages import TokenStorageError
 
