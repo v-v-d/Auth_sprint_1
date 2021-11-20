@@ -6,14 +6,14 @@ from werkzeug import exceptions
 from app.api.admin import namespace
 from app.api.admin.parsers import role_list_parser, role_parser
 from app.api.admin.schemas import admin_role_schema
-from app.base import BaseJWTResource, BaseJWTCachedResource
+from app.base import BaseJWTAdminCachedResource, BaseJWTAdminResource
 from app.database import session_scope
 from app.datastore import user_datastore
 from app.models import Role
 
 
 @namespace.route("/roles")
-class RolesView(BaseJWTCachedResource):
+class RolesView(BaseJWTAdminCachedResource):
     @namespace.doc("get list of roles")
     @namespace.expect(role_list_parser)
     @namespace.marshal_with(admin_role_schema, as_list=True, code=http.HTTPStatus.OK)
@@ -48,7 +48,7 @@ class RolesView(BaseJWTCachedResource):
 
 
 @namespace.route("/roles/<uuid:role_id>")
-class SpecificRolesView(BaseJWTResource):
+class SpecificRolesView(BaseJWTAdminResource):
     @namespace.doc(
         "change role",
         responses={

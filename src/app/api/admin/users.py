@@ -3,14 +3,14 @@ import http
 from flask import jsonify
 
 from app.api.admin import namespace
-from app.base import BaseJWTResource
+from app.base import BaseJWTAdminResource
 from app.database import session_scope
 from app.datastore import user_datastore
 from app.models import User, Role
 
 
 @namespace.route("/users/<uuid:user_id>/has-role/<string:role_name>")
-class CheckUserRoleView(BaseJWTResource):
+class CheckUserRoleView(BaseJWTAdminResource):
     @namespace.doc("check if user has specific role")
     def get(self, user_id: int, role_name: str):
         user = User.query.get_or_404(user_id)
@@ -18,7 +18,7 @@ class CheckUserRoleView(BaseJWTResource):
 
 
 @namespace.route("/users/<uuid:user_id>/set-role/<uuid:role_id>")
-class UserRoleView(BaseJWTResource):
+class UserRoleView(BaseJWTAdminResource):
     @namespace.doc(
         "change user role",
         responses={

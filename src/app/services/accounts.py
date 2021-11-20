@@ -44,6 +44,7 @@ class AccountsService:
             identity=self.user,
             additional_claims={
                 "is_admin": self.user.is_admin,
+                "roles": self.user.roles_names_list,
             },
         )
 
