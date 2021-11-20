@@ -11,8 +11,8 @@ jobs:
           python-version: 3.9
       - name: Install sort-requirements
         run: pip install sort-requirements
-      - name: Run sort-requirements --check ./requirements/base.txt ./requirements/dev.txt ./requirements/prod.txt
-        run: sort-requirements --check ./requirements/base.txt ./requirements/dev.txt ./requirements/prod.txt
+      - name: Run sort-requirements --check ./requirements/base.txt ./requirements/dev.txt ./requirements/prod.txt ./src/tests/functional/requirements.txt
+        run: sort-requirements --check ./requirements/base.txt ./requirements/dev.txt ./requirements/prod.txt ./src/tests/functional/requirements.txt
       - name: If needed, commit sort-requirements changes to the pull request
         if: failure()
         run: |
