@@ -52,6 +52,10 @@ docker network create yandex
 docker-compose up --build
 ```
 3. Перейти к документации по адресу 0.0.0.0
+4. Создать суперпользователя. В соседнем терминале выполнить
+```shell
+docker exec -it auth-app python manage.py create-superuser --login <тут логин> --password <тут пароль>
+```
 
 ### Тестирование
 Собрать тестовое окружение и запустить тесты
