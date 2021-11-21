@@ -30,8 +30,8 @@ def rate_limit(*args, **kwargs):
 
     if request_number > settings.RATE_LIMIT.MAX_CALLS:
         return Response(
-            'Воу Воу, остановись, отдохни теперь минутку',
-            http.HTTPStatus.TOO_MANY_REQUESTS
+            "Воу Воу, остановись, отдохни теперь минутку",
+            http.HTTPStatus.TOO_MANY_REQUESTS,
         )
 
 
