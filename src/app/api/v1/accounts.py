@@ -15,12 +15,10 @@ from app.datastore import user_datastore
 from app.models import DefaultRoleEnum
 from app.services.accounts import AccountsService, AccountsServiceError
 from app.services.storages import TokenStorageError, InvalidTokenError
-from app.services.rate_limit import rate_limit
 
 
 @namespace.route("/signup")
 class SignUpView(Resource):
-    @rate_limit()
     @namespace.doc("signup")
     @namespace.expect(signup_parser)
     @namespace.marshal_with(signup_schema, code=http.HTTPStatus.CREATED)
@@ -37,7 +35,6 @@ class SignUpView(Resource):
 
 @namespace.route("/login")
 class LoginView(Resource):
-    @rate_limit()
     @namespace.doc("login")
     @namespace.expect(login_parser)
     def post(self):
@@ -64,7 +61,6 @@ class LoginView(Resource):
 
 @namespace.route("/logout")
 class LogoutView(BaseJWTResource):
-    @rate_limit()
     @namespace.doc("logout")
     def post(self):
         try:
@@ -75,7 +71,6 @@ class LogoutView(BaseJWTResource):
 
 @namespace.route("/refresh")
 class RefreshView(Resource):
-    @rate_limit()
     @namespace.doc("refresh")
     @jwt_required(refresh=True)
     def post(self):

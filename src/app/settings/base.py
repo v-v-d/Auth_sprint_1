@@ -55,6 +55,11 @@ class RedisSettings(BaseDSNSettings):
         env_prefix = "REDIS_"
 
 
+class RateLimit(BaseSettings):
+    MAX_CALLS: int = 20
+    PERIOD: int = 59
+
+
 class DatabaseSettings(BaseDSNSettings):
     PROTOCOL: str = "postgresql"
     DSN: PostgresDsn = None
@@ -88,6 +93,7 @@ class CommonSettings(BaseSettings):
     REDIS: RedisSettings = RedisSettings()
     DB: DatabaseSettings = DatabaseSettings()
     JWT: JWTSettings = JWTSettings()
+    RATE_LIMIT: RateLimit = RateLimit()
 
     DEFAULT_PAGE_LIMIT: int = 5
     CACHE_DEFAULT_TIMEOUT: int = 60 * 60 * 3
