@@ -6,10 +6,14 @@ from app.database import init_db
 from app.datastore import init_datastore
 from app.jwt import init_jwt
 from app.settings import settings
+from app.middlewares import init_rate_limit
+
 
 app = Flask(settings.FLASK_APP)
 app.config["DEBUG"] = settings.DEBUG
 
+
+init_rate_limit(app)
 init_db(app)
 init_datastore(app)
 init_api(app)
