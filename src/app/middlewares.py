@@ -22,5 +22,5 @@ def init_rate_limit(app: Flask):
 
         if request_number > settings.RATE_LIMIT.MAX_CALLS:
             raise exceptions.TooManyRequests(
-                'Уважаемый ревьюер, просьба перестать спамить. Отдохни теперь минутку'
+                "Уважаемый ревьюер, просьба перестать спамить. Отдохни теперь минутку"
             )
