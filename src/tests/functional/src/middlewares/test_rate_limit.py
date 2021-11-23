@@ -11,7 +11,7 @@ def test_rate_limit(
         path="/api/internal/v1/users/info",
     )
 
-    for i in range(30):
+    for i in range(6):
         response = client.get(
             path="/api/internal/v1/users/info",
         )
