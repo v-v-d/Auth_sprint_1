@@ -6,10 +6,10 @@ from fakeredis import FakeStrictRedis
 from flask_migrate import Config
 
 from app import redis
-from app import main
+from app import middlewares
 from app.database import db, session_scope
 from app.datastore import user_datastore
-from app.main import app, rate_limit
+from app.main import app
 from app.models import Role, DefaultRoleEnum
 from app.services import storages
 from app.services.accounts import AccountsService
@@ -91,7 +91,7 @@ def mocked_redis(monkeypatch):
     monkeypatch.setattr(redis, "redis_conn", faked_redis)
     monkeypatch.setattr(storages, "redis_conn", faked_redis)
     monkeypatch.setattr(storages.token_storage, "redis", faked_redis)
-    monkeypatch.setattr(main, "redis_conn", faked_redis)
+    monkeypatch.setattr(middlewares, "redis_conn", faked_redis)
 
 
 @pytest.fixture(autouse=True)
@@ -101,3 +101,8 @@ def mocked_cache(monkeypatch):
     del copy_config["CACHE_REDIS_URL"]
 
     monkeypatch.setattr(app, "config", copy_config)
+
+
+@pytest.fixture
+def mocked_rate_limit(monkeypatch):
+    monkeypatch.setattr(settings.RATE_LIMIT, "MAX_CALLS", 4)

@@ -59,6 +59,9 @@ class RateLimit(BaseSettings):
     MAX_CALLS: int = 20
     PERIOD: int = 59
 
+    class Config:
+        env_prefix = "RATE_LIMIT_"
+
 
 class DatabaseSettings(BaseDSNSettings):
     PROTOCOL: str = "postgresql"
