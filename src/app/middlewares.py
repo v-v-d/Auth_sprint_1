@@ -8,6 +8,10 @@ from app.redis import redis_conn
 from app.settings import settings
 
 
+class MissedTraceIdError(Exception):
+    pass
+
+
 def rate_limit_middleware():
     dt = datetime.now().replace(second=0, microsecond=0)
     key = f"{request.remote_addr}:{dt}"
@@ -23,7 +27,15 @@ def rate_limit_middleware():
         raise exceptions.TooManyRequests()
 
 
+def tracing_middleware():
+    request_id = request.headers.get("X-Request-Id")
+
+    if not request_id:
+        raise MissedTraceIdError("request id is required")
+
+
 def init_middlewares(app: Flask):
     @app.before_request
     def apply_middlewares():
         rate_limit_middleware()
+        tracing_middleware()
