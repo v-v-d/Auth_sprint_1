@@ -11,7 +11,7 @@ from app.database import db
 
 
 def create_partition_history(target, connection, **kw) -> None:
-    """ creating partition by user_sign_in """
+    """creating partition by user_sign_in"""
     connection.execute(
         """CREATE TABLE IF NOT EXISTS "user_sign_in_smart" PARTITION OF "auth_history" FOR VALUES IN ('smart')"""
     )
@@ -33,7 +33,7 @@ def create_partition_history(target, connection, **kw) -> None:
 
 
 def create_partition_user(target, connection, **kw) -> None:
-    """ creating partition by user_sign_in """
+    """creating partition by user_sign_in"""
     connection.execute(
         """CREATE TABLE IF NOT EXISTS "user_registration"
          PARTITION OF date_part('year', 'created_on') FOR VALUES IN (date_part('year', now()))"""
@@ -100,11 +100,11 @@ class Role(TimestampMixin, db.Model, RoleMixin, MethodsExtensionMixin):
 class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
     __tablename__ = "users"
     __table_args__ = (
-        UniqueConstraint('id', 'created_on'),
+        UniqueConstraint("id", "created_on"),
         {
-            'postgresql_partition_by': 'LIST (created_on)',
-            'listeners': [('after_create', create_partition_user)],
-        }
+            "postgresql_partition_by": "LIST (created_on)",
+            "listeners": [("after_create", create_partition_user)],
+        },
     )
 
     id = db.Column(
@@ -149,11 +149,11 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
 class AuthHistory(db.Model):
     __tablename__ = "auth_history"
     __table_args__ = (
-        UniqueConstraint('id', 'device'),
+        UniqueConstraint("id", "device"),
         {
-            'postgresql_partition_by': 'LIST (device)',
-            'listeners': [('after_create', create_partition_history)],
-        }
+            "postgresql_partition_by": "LIST (device)",
+            "listeners": [("after_create", create_partition_history)],
+        },
     )
 
     id = db.Column(
