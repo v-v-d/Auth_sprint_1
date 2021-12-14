@@ -1,26 +1,29 @@
-import datetime
+from datetime import datetime
 
 from flask import Flask, request
+from redis.client import Pipeline
 from werkzeug import exceptions
 
-from app.settings import settings
 from app.redis import redis_conn
+from app.settings import settings
 
 
-def init_rate_limit(app: Flask):
-    @app.before_request
-    def rate_limit(*args, **kwargs):
-        pipe = redis_conn.pipeline()
-        now = datetime.datetime.now()
-        key = f"{request.remote_addr}:{now.minute}"
+def rate_limit_middleware():
+    dt = datetime.now().replace(second=0, microsecond=0)
+    key = f"{request.remote_addr}:{dt}"
+    increment_step = 1
 
-        pipe.incr(key, 1)
+    def callback(pipe: Pipeline) -> None:
+        pipe.incr(key, increment_step)
         pipe.expire(key, settings.RATE_LIMIT.PERIOD)
 
-        result = pipe.execute()
-        request_number = result[0]
+    request_number, _ = redis_conn.transaction(func=callback)
 
-        if request_number > settings.RATE_LIMIT.MAX_CALLS:
-            raise exceptions.TooManyRequests(
-                "Уважаемый ревьюер, просьба перестать спамить. Отдохни теперь минутку"
-            )
+    if request_number > settings.RATE_LIMIT.MAX_CALLS:
+        raise exceptions.TooManyRequests()
+
+
+def init_middlewares(app: Flask):
+    @app.before_request
+    def apply_middlewares():
+        rate_limit_middleware()
