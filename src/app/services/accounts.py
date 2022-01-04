@@ -7,16 +7,37 @@ from werkzeug.useragents import UserAgent
 
 from app.database import session_scope, db
 from app.models import User, AuthHistory
-from app.services.storages import token_storage, InvalidTokenError
+from app.services.storages import (
+    token_storage,
+    InvalidTokenError,
+    TokenStorageError,
+)
 
 
 class AccountsServiceError(Exception):
     pass
 
 
+class BadAuthorizationError(Exception):
+    pass
+
+
 class AccountsService:
     def __init__(self, user: User):
         self.user = user
+
+    def login(self, request: Request) -> tuple[str, str]:
+        self.record_entry_time(request)
+
+        try:
+            access_token, refresh_token = self.get_token_pair()
+        except TokenStorageError as err:
+            raise AccountsServiceError from err
+
+        with session_scope():
+            self.user.last_login = datetime.utcnow()
+
+        return access_token, refresh_token
 
     @staticmethod
     def get_authorized_user(login: str, password: str) -> User:
@@ -25,17 +46,14 @@ class AccountsService:
         if not user or not user.check_password(password):
             raise AccountsServiceError
 
-        with session_scope():
-            user.last_login = datetime.utcnow()
-
         return user
 
     def refresh_token_pair(self, refresh_token_jti: str) -> tuple[str, str]:
         try:
             token_storage.validate_refresh_token(refresh_token_jti, self.user.id)
-        except InvalidTokenError:
+        except InvalidTokenError as err:
             token_storage.invalidate_current_refresh_token(self.user.id)
-            raise
+            raise BadAuthorizationError from err
 
         return self.get_token_pair()
 
@@ -56,7 +74,10 @@ class AccountsService:
             },
         )
 
-        token_storage.set_refresh_token(refresh_token_jti, self.user.id)
+        try:
+            token_storage.set_refresh_token(refresh_token_jti, self.user.id)
+        except TokenStorageError as err:
+            raise AccountsServiceError from err
 
         return access_token, refresh_token
 
@@ -75,4 +96,7 @@ class AccountsService:
 
     @staticmethod
     def logout(access_token_jti: str, user_id: int) -> None:
-        token_storage.invalidate_token_pair(access_token_jti, user_id)
+        try:
+            token_storage.invalidate_token_pair(access_token_jti, user_id)
+        except TokenStorageError as err:
+            raise AccountsServiceError from err

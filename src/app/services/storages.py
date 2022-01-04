@@ -7,11 +7,15 @@ from app.redis import redis_conn
 from app.settings import settings
 
 
-class TokenStorageError(Exception):
+class BaseTokenStorageError(Exception):
     pass
 
 
-class InvalidTokenError(Exception):
+class TokenStorageError(BaseTokenStorageError):
+    pass
+
+
+class InvalidTokenError(BaseTokenStorageError):
     pass
 
 

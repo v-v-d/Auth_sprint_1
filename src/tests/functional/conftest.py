@@ -52,15 +52,22 @@ def default_user_login():
 
 
 @pytest.fixture
+def default_user_email():
+    return "test@test.com"
+
+
+@pytest.fixture
 def default_user_password():
     return "test"
 
 
 @pytest.fixture
-def default_user(default_user_login, default_user_password):
+def default_user(default_user_login, default_user_password, default_user_email):
     with session_scope():
         user = user_datastore.create_user(
-            login=default_user_login, password=default_user_password
+            login=default_user_login,
+            password=default_user_password,
+            email=default_user_email,
         )
         user_datastore.add_role_to_user(user, DefaultRoleEnum.guest.value)
 

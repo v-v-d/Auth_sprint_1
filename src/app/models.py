@@ -1,11 +1,12 @@
 from enum import Enum
+from typing import Optional
 from uuid import uuid4
 
 from flask_security import UserMixin, RoleMixin
 from sqlalchemy.dialects.postgresql import UUID
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.database import db
+from app.database import db, session_scope
 
 
 class DefaultRoleEnum(str, Enum):
@@ -55,7 +56,7 @@ class Role(TimestampMixin, db.Model, RoleMixin, MethodsExtensionMixin):
     description = db.Column(db.String(255))
 
     def __str__(self):
-        return self.name
+        return f"<Role {self.name}>"
 
     class Meta:
         PROTECTED_ROLE_NAMES = (
@@ -67,6 +68,7 @@ class Role(TimestampMixin, db.Model, RoleMixin, MethodsExtensionMixin):
 
 class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
     __tablename__ = "users"
+    __table_args__ = (db.UniqueConstraint("login", "email", name="login_email_uc"),)
 
     id = db.Column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False
@@ -83,17 +85,38 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
     )
 
     def __str__(self) -> str:
-        return self.login
+        return f"<User {self.login}>"
+
+    @classmethod
+    def get_or_create(cls, login: str, email: str) -> Optional["User"]:
+        from app.datastore import user_datastore  # circular import
+
+        user = cls.query.filter(
+            db.and_(
+                cls.login == login,
+                cls.email == email,
+            )
+        ).first()
+
+        if not user:
+            with session_scope():
+                user = user_datastore.create_user(
+                    login=login,
+                    email=email,
+                    password=str(uuid4()),  # random password, will be changed by user
+                )
+
+        return user
 
     @property
     def password(self) -> str:
         return self._password
 
     @password.setter
-    def password(self, password) -> None:
+    def password(self, password: str) -> None:
         self._password = generate_password_hash(password)
 
-    def check_password(self, password) -> bool:
+    def check_password(self, password: str) -> bool:
         return check_password_hash(self._password, password)
 
     @property
@@ -118,3 +141,44 @@ class AuthHistory(db.Model):
     user_agent = db.Column(db.Text, nullable=False)
     ip_addr = db.Column(db.String(100))
     device = db.Column(db.Text)
+
+
+class SocialAccount(db.Model):
+    __tablename__ = "social_accounts"
+    __table_args__ = (
+        db.UniqueConstraint("social_id", "social_name", name="social_uc"),
+    )
+
+    id = db.Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False
+    )
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship(User, backref=db.backref("social_accounts", lazy=True))
+
+    social_id = db.Column(db.String(255), nullable=False)
+    social_name = db.Column(db.String(255), nullable=False)
+
+    def __str__(self) -> str:
+        return f"<SocialAccount {self.social_name}:{self.user_id}>"
+
+    @classmethod
+    def get_or_create(
+        cls, social_id: str, social_name: str, user_name: str, user_email: str
+    ) -> "SocialAccount":
+        social_acc = cls.query.filter_by(
+            social_id=social_id,
+            social_name=social_name,
+        ).first()
+
+        if not social_acc:
+            user = User.get_or_create(user_name, user_email)
+
+            with session_scope() as session:
+                social_acc = cls(
+                    social_id=social_id,
+                    social_name=social_name,
+                    user_id=user.id,
+                )
+                session.add(social_acc)
+
+        return social_acc
