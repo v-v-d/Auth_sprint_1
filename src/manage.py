@@ -37,10 +37,10 @@ def create_superuser(
     password: Optional[str] = typer.Option(None),
 ) -> None:
     if not login:
-        login = settings.DEFAULT_ADMIN_LOGIN
+        login = settings.SECURITY.DEFAULT_ADMIN_LOGIN
 
     if not password:
-        password = settings.DEFAULT_ADMIN_PASSWORD
+        password = settings.SECURITY.DEFAULT_ADMIN_PASSWORD
 
     try:
         with session_scope():

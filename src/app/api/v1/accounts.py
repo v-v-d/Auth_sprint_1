@@ -6,15 +6,19 @@ from flask_restplus import Resource
 from sqlalchemy.exc import IntegrityError
 from werkzeug import exceptions
 
+from app.api.base import BaseJWTResource
 from app.api.v1 import namespace
 from app.api.v1.parsers import signup_parser, login_parser
 from app.api.v1.schemas import signup_schema
-from app.api.base import BaseJWTResource
 from app.database import session_scope
 from app.datastore import user_datastore
 from app.models import DefaultRoleEnum
-from app.services.accounts import AccountsService, AccountsServiceError
-from app.services.storages import TokenStorageError, InvalidTokenError
+from app.services.accounts import (
+    AccountsService,
+    AccountsServiceError,
+    BadAuthorizationError,
+)
+from app.services.storages import TokenStorageError
 
 
 @namespace.route("/signup")
@@ -49,11 +53,10 @@ class LoginView(Resource):
             raise exceptions.Unauthorized()
 
         account_service = AccountsService(user)
-        account_service.record_entry_time(request)
 
         try:
-            access_token, refresh_token = account_service.get_token_pair()
-        except TokenStorageError:
+            access_token, refresh_token = account_service.login(request)
+        except AccountsServiceError:
             raise exceptions.Unauthorized()
 
         return jsonify(access_token=access_token, refresh_token=refresh_token)
@@ -63,9 +66,11 @@ class LoginView(Resource):
 class LogoutView(BaseJWTResource):
     @namespace.doc("logout")
     def post(self):
+        jti = get_jwt()["jti"]
+
         try:
-            AccountsService.logout(get_jwt()["jti"], current_user.id)
-        except TokenStorageError:
+            AccountsService.logout(jti, current_user.id)
+        except AccountsServiceError:
             raise exceptions.FailedDependency()
 
 
@@ -75,14 +80,13 @@ class RefreshView(Resource):
     @jwt_required(refresh=True)
     def post(self):
         account_service = AccountsService(current_user)
+        jti = get_jwt()["jti"]
 
         try:
-            access_token, new_refresh_token = account_service.refresh_token_pair(
-                get_jwt()["jti"]
-            )
+            access_token, new_refresh_token = account_service.refresh_token_pair(jti)
         except TokenStorageError:
             raise exceptions.FailedDependency()
-        except InvalidTokenError:
+        except BadAuthorizationError:
             raise exceptions.Unauthorized()
 
         return jsonify(access_token=access_token, refresh_token=new_refresh_token)
