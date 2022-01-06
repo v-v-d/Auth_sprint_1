@@ -1,3 +1,7 @@
+from gevent import monkey
+
+monkey.patch_all()
+
 from copy import deepcopy
 
 import pytest
@@ -5,8 +9,8 @@ from alembic import command
 from fakeredis import FakeStrictRedis
 from flask_migrate import Config
 
-from app import redis
 from app import middlewares
+from app import redis
 from app.database import db, session_scope
 from app.datastore import user_datastore
 from app.main import app
@@ -16,6 +20,11 @@ from app.services.accounts import AccountsService
 from app.settings import settings
 
 assert settings.TESTING, "You must set TESTING=True env for run the tests."
+
+
+@pytest.fixture(autouse=True)
+def disable_tracing(monkeypatch):
+    monkeypatch.setattr(settings.JAEGER, "ENABLED", False)
 
 
 @pytest.fixture(scope="session", autouse=True)

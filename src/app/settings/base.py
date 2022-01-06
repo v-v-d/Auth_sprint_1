@@ -82,10 +82,12 @@ class JWTSettings(BaseSettings):
 
 
 class JaegerSettings(BaseSettings):
-    JAEGER_TYPE: str = "const"
+    ENABLED: bool = True
+    TYPE: str = "const"
     REPORTING_HOST: str = "jaeger"
     REPORTING_PORT: int = 6831
     SERVICE_NAME: str = "auth_app"
+    TRACE_ID_HEADER: str = "X-Request-Id"
 
     class Config:
         env_prefix = "JAEGER_"

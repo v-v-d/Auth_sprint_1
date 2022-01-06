@@ -2,14 +2,27 @@ from contextlib import contextmanager
 
 from flask import Flask
 from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
+from flask_sqlalchemy import SQLAlchemy, SignallingSession
+from sqlalchemy import MetaData, orm
 
 from app.settings import settings
+from app.tracing import traced
+
+
+class TracedSignallingSession(SignallingSession):
+    @traced("DB call")
+    def execute(self, *args, **kwargs):
+        return super().execute(*args, **kwargs)
+
+
+class TracedSQLAlchemy(SQLAlchemy):
+    def create_session(self, options):
+        return orm.sessionmaker(class_=TracedSignallingSession, db=self, **options)
+
 
 metadata = MetaData(schema=settings.DB.SCHEMA)
 
-db = SQLAlchemy(metadata=metadata)
+db = TracedSQLAlchemy(metadata=metadata)
 migrate = Migrate()
 
 

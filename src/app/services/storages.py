@@ -5,6 +5,7 @@ from redis.client import StrictRedis, Pipeline
 
 from app.redis import redis_conn
 from app.settings import settings
+from app.tracing import traced
 
 
 class BaseTokenStorageError(Exception):
@@ -70,6 +71,7 @@ class RedisTokenStorage(AbstractTokenStorage):
         self._execute(self.redis.transaction, func=callback)
 
     @staticmethod
+    @traced("Redis token storage")
     def _execute(method, *args, **kwargs):
         try:
             return method(*args, **kwargs)

@@ -1,7 +1,6 @@
 from logging.config import dictConfig
 
 from flask import Flask
-from flask_opentracing import FlaskTracer
 
 from app.api import init_api
 from app.cache import init_cache
@@ -12,17 +11,15 @@ from app.middlewares import init_middlewares
 from app.oauth import init_oauth
 from app.settings import settings
 from app.settings.logging import LOGGING
-from app.tracer import setup_jaeger
+from app.tracing import init_tracer
 
 dictConfig(LOGGING)
-
 
 app = Flask(settings.FLASK_APP)
 app.config["DEBUG"] = settings.DEBUG
 app.config["SECRET_KEY"] = settings.SECURITY.SECRET_KEY
 
-tracer = FlaskTracer(setup_jaeger, True, app=app)
-
+init_tracer(app)
 init_middlewares(app)
 init_db(app)
 init_datastore(app)

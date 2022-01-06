@@ -5,6 +5,7 @@ from flask_caching import Cache
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 
 from app.settings import settings
+from app.tracing import traced
 
 cache = Cache()
 
@@ -16,6 +17,7 @@ def cached(func):
     """
 
     @wraps(func)
+    @traced("Cache")
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         return cache.cached(key_prefix=get_jwt()["sub"])(func)(*args, **kwargs)

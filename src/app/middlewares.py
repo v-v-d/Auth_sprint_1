@@ -8,10 +8,6 @@ from app.redis import redis_conn
 from app.settings import settings
 
 
-class MissedTraceIdError(Exception):
-    pass
-
-
 def rate_limit_middleware():
     dt = datetime.now().replace(second=0, microsecond=0)
     key = f"{request.remote_addr}:{dt}"
@@ -28,10 +24,13 @@ def rate_limit_middleware():
 
 
 def tracing_middleware():
-    request_id = request.headers.get("X-Request-Id")
+    if not settings.JAEGER.ENABLED:
+        return
 
-    if not request_id:
-        raise MissedTraceIdError("request id is required")
+    if not request.headers.get(settings.JAEGER.TRACE_ID_HEADER):
+        raise exceptions.BadRequest(
+            f"{settings.JAEGER.TRACE_ID_HEADER} header is required."
+        )
 
 
 def init_middlewares(app: Flask):

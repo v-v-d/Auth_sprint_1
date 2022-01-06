@@ -21,6 +21,11 @@ LOGGING = {
             "level": settings.LOG_LEVEL,
             "propagate": False,
         },
+        "jaeger_tracing": {
+            "handlers": ["wsgi"],
+            "level": settings.LOG_LEVEL,
+            "propagate": False,
+        },
     },
     "root": {"level": settings.LOG_LEVEL, "handlers": ["wsgi"]},
 }
