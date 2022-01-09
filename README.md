@@ -26,6 +26,8 @@
 - PostgreSQL — хранилище данных, в котором лежит вся необходимая информация для сервса.
 - Redis — хранилище данных для токенов.
 - SQLAlchemy - используется как ORM.
+- OpenTelemetry - инструмент для трассировки запросов.
+- Jaeger - бэкенд, БД и UI для трассировки запросов.
 
 ## Используемые технологии
 - Flask + gevent
@@ -34,6 +36,9 @@
 - Docker
 - Pytest + pytest coverage
 - SQLAlchemy
+- Oauth
+- OpenTelemetry
+- Jaeger
 
 ## Общие правила aka code-style
 1. Вся бизнес-логика должна помещаться в провайдерах src/app/services

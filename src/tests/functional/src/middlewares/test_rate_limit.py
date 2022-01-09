@@ -1,7 +1,5 @@
 import http
 
-import pytest
-
 
 def test_rate_limit(
     client,

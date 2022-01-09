@@ -11,6 +11,7 @@ from app.middlewares import init_middlewares
 from app.oauth import init_oauth
 from app.settings import settings
 from app.settings.logging import LOGGING
+from app.tracing import init_tracing
 
 dictConfig(LOGGING)
 
@@ -20,6 +21,7 @@ app.config["SECRET_KEY"] = settings.SECURITY.SECRET_KEY
 
 init_middlewares(app)
 init_db(app)
+init_tracing(app)
 init_datastore(app)
 init_oauth(app)
 init_api(app)

@@ -9,7 +9,7 @@ from app.services.oauth import OauthServiceError, OauthService
 
 @namespace.route("/login/<string:social_name>")
 class OauthLoginView(Resource):
-    @namespace.doc("oauth login")
+    @namespace.doc("oauth login, available: google, yandex")
     def get(self, social_name: str):
         client = oauth.create_client(social_name)
 
@@ -25,7 +25,7 @@ class OauthLoginView(Resource):
 
 @namespace.route("/auth/<string:social_name>")
 class OauthAuthorizationView(Resource):
-    @namespace.doc("oauth authorization")
+    @namespace.doc("oauth authorization, available: google, yandex")
     def get(self, social_name: str):
         client = oauth.create_client(social_name)
 

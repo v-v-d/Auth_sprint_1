@@ -106,6 +106,17 @@ class SecuritySettings(BaseSettings):
         env_prefix = "SECURITY_"
 
 
+class TracingSettings(BaseSettings):
+    ENABLED: bool = True
+    SERVICE_NAME: str = "auth-app"
+    AGENT_HOST_NAME: str = "jaeger"
+    AGENT_PORT: int = 6831
+    TRACE_ID_HEADER: str = "X-Request-Id"
+
+    class Config:
+        env_prefix = "TRACING_"
+
+
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
 
@@ -122,6 +133,7 @@ class CommonSettings(BaseSettings):
     RATE_LIMIT: RateLimitSettings = RateLimitSettings()
     OAUTH: OauthSettings = OauthSettings()
     SECURITY: SecuritySettings = SecuritySettings()
+    TRACING: TracingSettings = TracingSettings()
 
     DEFAULT_PAGE_LIMIT: int = 5
     CACHE_DEFAULT_TIMEOUT: int = 60 * 60 * 3

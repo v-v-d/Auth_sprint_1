@@ -23,7 +23,16 @@ def rate_limit_middleware():
         raise exceptions.TooManyRequests()
 
 
+def tracing_middleware():
+    if not settings.TRACING.ENABLED:
+        return
+
+    if not request.headers.get(settings.TRACING.TRACE_ID_HEADER):
+        raise exceptions.BadRequest(f"{settings.TRACING.TRACE_ID_HEADER} is required.")
+
+
 def init_middlewares(app: Flask):
     @app.before_request
     def apply_middlewares():
         rate_limit_middleware()
+        tracing_middleware()
