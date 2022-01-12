@@ -25,7 +25,7 @@ services:
     depends_on:
       - redis
       - db
-      - es-apm
+      - apm-server
     volumes:
       - ./src/app:/code/app
       - ./src/manage.py:/code/manage.py
