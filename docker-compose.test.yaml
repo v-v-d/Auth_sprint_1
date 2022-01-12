@@ -16,6 +16,7 @@ services:
       - DEBUG=False
       - TESTING=True
       - POSTGRES_HOST=test-auth-postgres
+      - APM_ENABLED=False
 
   test-db:
     image: postgres:13

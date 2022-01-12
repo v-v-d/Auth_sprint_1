@@ -25,6 +25,7 @@ services:
     depends_on:
       - redis
       - db
+      - apm-server
     volumes:
       - ./src/app:/code/app
       - ./src/manage.py:/code/manage.py
@@ -59,6 +60,76 @@ services:
       - redis-server
     networks:
       yandex:
+
+  apm-server:
+    image: elastic/apm-server:7.14.2
+    container_name: apm-server
+    depends_on:
+      - es-apm
+      - kibana-apm
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    expose:
+      - "8200"
+    networks:
+      yandex:
+    command: >
+       apm-server -e
+         -E apm-server.rum.enabled=true
+         -E setup.kibana.host=kibana-apm:5601
+         -E setup.template.settings.index.number_of_replicas=0
+         -E apm-server.kibana.enabled=true
+         -E apm-server.kibana.host=kibana-apm:5601
+         -E output.elasticsearch.hosts=["es-apm:9200"]
+    healthcheck:
+      interval: 10s
+      retries: 12
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
+
+  es-apm:
+    image: elasticsearch:7.14.2
+    container_name: es-apm
+    environment:
+      - bootstrap.memory_lock=true
+      - cluster.name=docker-cluster
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    expose:
+      - "9200"
+    networks:
+      yandex:
+    healthcheck:
+      interval: 20s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+
+  kibana-apm:
+    image: kibana:7.14.2
+    container_name: kibana-apm
+    depends_on:
+      - es-apm
+    environment:
+      ELASTICSEARCH_URL: http://es-apm:9200
+      ELASTICSEARCH_HOSTS: http://es-apm:9200
+    ports:
+      - "5602:5601"
+    networks:
+      yandex:
+    healthcheck:
+      interval: 10s
+      retries: 20
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
+
+volumes:
+  esdata:
+    driver: local
 
 networks:
   yandex:

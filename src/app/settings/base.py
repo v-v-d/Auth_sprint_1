@@ -106,6 +106,16 @@ class SecuritySettings(BaseSettings):
         env_prefix = "SECURITY_"
 
 
+class APMSettings(BaseSettings):
+    ENABLED: bool
+    SERVER_URL: str
+    SERVICE_NAME: str
+    ENVIRONMENT: str
+
+    class Config:
+        env_prefix = "APM_"
+
+
 class CommonSettings(BaseSettings):
     FLASK_APP: str = "app.main:app"
 
@@ -122,6 +132,7 @@ class CommonSettings(BaseSettings):
     RATE_LIMIT: RateLimitSettings = RateLimitSettings()
     OAUTH: OauthSettings = OauthSettings()
     SECURITY: SecuritySettings = SecuritySettings()
+    APM: APMSettings = APMSettings()
 
     DEFAULT_PAGE_LIMIT: int = 5
     CACHE_DEFAULT_TIMEOUT: int = 60 * 60 * 3

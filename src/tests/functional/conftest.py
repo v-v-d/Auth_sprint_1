@@ -1,9 +1,14 @@
+from gevent import monkey
+
+monkey.patch_all()
+
 from copy import deepcopy
 
 import pytest
 from alembic import command
 from fakeredis import FakeStrictRedis
 from flask_migrate import Config
+from pytest_mock import MockerFixture
 
 from app import redis
 from app import middlewares
@@ -16,6 +21,11 @@ from app.services.accounts import AccountsService
 from app.settings import settings
 
 assert settings.TESTING, "You must set TESTING=True env for run the tests."
+
+
+@pytest.fixture(scope="session", autouse=True)
+def disable_apm(session_mocker: MockerFixture):
+    session_mocker.patch.object(settings.APM, "ENABLED", False)
 
 
 @pytest.fixture(scope="session", autouse=True)
