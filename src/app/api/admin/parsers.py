@@ -12,5 +12,5 @@ role_parser.add_argument(
 role_list_parser = namespace.parser()
 role_list_parser.add_argument("page", type=int, default=0, help="page")
 role_list_parser.add_argument(
-    "per_page", type=int, default=settings.DEFAULT_PAGE_LIMIT, help="Items per page"
+    "per_page", type=int, default=settings.PAGINATION.PAGE_LIMIT, help="Items per page"
 )

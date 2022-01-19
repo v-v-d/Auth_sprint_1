@@ -32,5 +32,5 @@ user_password_parser.add_argument(
 user_history_parser = namespace.parser()
 user_history_parser.add_argument("page", type=int, default=0, help="page")
 user_history_parser.add_argument(
-    "per_page", type=int, default=settings.DEFAULT_PAGE_LIMIT, help="Items per page"
+    "per_page", type=int, default=settings.PAGINATION.PAGE_LIMIT, help="Items per page"
 )

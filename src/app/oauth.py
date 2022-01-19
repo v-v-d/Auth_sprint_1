@@ -30,21 +30,21 @@ oauth.register(
     authorize_params={
         "response_type": "code",
     },
-    userinfo_endpoint=settings.OAUTH.YANDEX_USERINFO_ENDPOINT,
+    userinfo_endpoint=settings.OAUTH.YANDEX.USERINFO_ENDPOINT,
     token_placement="header",
     userinfo_compliance_fix=yandex_compliance_fix,
 )
 
 
 def init_oauth(app: Flask):
-    app.config["GOOGLE_CLIENT_ID"] = settings.OAUTH.GOOGLE_CLIENT_ID
-    app.config["GOOGLE_CLIENT_SECRET"] = settings.OAUTH.GOOGLE_CLIENT_SECRET
-    app.config["GOOGLE_SERVER_METADATA_URL"] = settings.OAUTH.GOOGLE_SERVER_METADATA_URL
+    app.config["GOOGLE_CLIENT_ID"] = settings.OAUTH.GOOGLE.CLIENT_ID
+    app.config["GOOGLE_CLIENT_SECRET"] = settings.OAUTH.GOOGLE.CLIENT_SECRET
+    app.config["GOOGLE_SERVER_METADATA_URL"] = settings.OAUTH.GOOGLE.SERVER_METADATA_URL
 
-    app.config["YANDEX_CLIENT_ID"] = settings.OAUTH.YANDEX_CLIENT_ID
-    app.config["YANDEX_CLIENT_SECRET"] = settings.OAUTH.YANDEX_CLIENT_SECRET
-    app.config["YANDEX_API_BASE_URL"] = settings.OAUTH.YANDEX_API_BASE_URL
-    app.config["YANDEX_ACCESS_TOKEN_URL"] = settings.OAUTH.YANDEX_ACCESS_TOKEN_URL
-    app.config["YANDEX_AUTHORIZE_URL"] = settings.OAUTH.YANDEX_AUTHORIZE_URL
+    app.config["YANDEX_CLIENT_ID"] = settings.OAUTH.YANDEX.CLIENT_ID
+    app.config["YANDEX_CLIENT_SECRET"] = settings.OAUTH.YANDEX.CLIENT_SECRET
+    app.config["YANDEX_API_BASE_URL"] = settings.OAUTH.YANDEX.API_BASE_URL
+    app.config["YANDEX_ACCESS_TOKEN_URL"] = settings.OAUTH.YANDEX.ACCESS_TOKEN_URL
+    app.config["YANDEX_AUTHORIZE_URL"] = settings.OAUTH.YANDEX.AUTHORIZE_URL
 
     oauth.init_app(app)

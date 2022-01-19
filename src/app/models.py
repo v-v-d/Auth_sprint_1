@@ -3,7 +3,7 @@ from typing import Optional
 from uuid import uuid4
 
 from flask_security import UserMixin, RoleMixin
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ENUM
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.database import db, session_scope
@@ -13,6 +13,12 @@ class DefaultRoleEnum(str, Enum):
     guest = "guest"
     superuser = "superuser"
     staff = "staff"
+
+
+class PlatformEnum(str, Enum):
+    pc = "pc"
+    mobile = "mobile"
+    tablet = "tablet"
 
 
 class MethodsExtensionMixin:
@@ -130,20 +136,26 @@ class User(TimestampMixin, db.Model, UserMixin, MethodsExtensionMixin):
         return [role.name for role in self.roles]
 
 
-class AuthHistory(db.Model):
-    __tablename__ = "auth_history"
+class AuthHistory(TimestampMixin, db.Model):
+    """
+    Partitioned by src/migrations/versions/custom1_auth_history_partitioning.py
+    """
 
-    id = db.Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False
-    )
+    __tablename__ = "auth_history"
+    __table_args__ = (db.PrimaryKeyConstraint("id", "platform"),)
+
+    id = db.Column(UUID(as_uuid=True), default=uuid4, nullable=False)
     user_id = db.Column("user_id", UUID(as_uuid=True), db.ForeignKey("users.id"))
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
     user_agent = db.Column(db.Text, nullable=False)
     ip_addr = db.Column(db.String(100))
     device = db.Column(db.Text)
+    platform = db.Column(
+        ENUM(PlatformEnum), nullable=False, server_default=PlatformEnum.pc
+    )
 
 
-class SocialAccount(db.Model):
+class SocialAccount(TimestampMixin, db.Model):
     __tablename__ = "social_accounts"
     __table_args__ = (
         db.UniqueConstraint("social_id", "social_name", name="social_uc"),
