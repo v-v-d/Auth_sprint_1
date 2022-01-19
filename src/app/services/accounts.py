@@ -14,19 +14,11 @@ from app.services.storages import (
 )
 
 
-class BaseAccountsServiceError(Exception):
+class AccountsServiceError(Exception):
     pass
 
 
-class AccountsServiceError(BaseAccountsServiceError):
-    pass
-
-
-class BadAuthorizationError(BaseAccountsServiceError):
-    pass
-
-
-class MissedPlatformError(AccountsServiceError):
+class BadAuthorizationError(Exception):
     pass
 
 
