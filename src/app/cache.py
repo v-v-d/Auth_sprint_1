@@ -26,6 +26,6 @@ def cached(func):
 def init_cache(app: Flask):
     app.config["CACHE_TYPE"] = "RedisCache"
     app.config["CACHE_REDIS_URL"] = settings.REDIS.DSN
-    app.config["CACHE_DEFAULT_TIMEOUT"] = settings.CACHE_DEFAULT_TIMEOUT
+    app.config["CACHE_DEFAULT_TIMEOUT"] = settings.CACHE.TTL
 
     cache.init_app(app)

@@ -17,5 +17,6 @@ redis==3.5.3
 requests==2.26.0
 SQLAlchemy==1.4.26
 typer==0.4.0
+user-agents==2.2.0
 Werkzeug==0.16.1
 markupsafe==2.0.1

@@ -3,10 +3,10 @@ from uuid import uuid4
 
 from flask import Request
 from flask_jwt_extended import create_access_token, create_refresh_token
-from werkzeug.useragents import UserAgent
+from user_agents import parse
 
 from app.database import session_scope, db
-from app.models import User, AuthHistory
+from app.models import User, AuthHistory, PlatformEnum
 from app.services.storages import (
     token_storage,
     InvalidTokenError,
@@ -82,15 +82,22 @@ class AccountsService:
         return access_token, refresh_token
 
     def record_entry_time(self, request: Request) -> None:
-        user_agent = UserAgent(request.headers.get("User-Agent"))
-        ip_addr = request.remote_addr
+        user_agent = parse(request.user_agent.string)
+
+        platform = PlatformEnum.pc
+
+        if user_agent.is_mobile:
+            platform = PlatformEnum.mobile
+        elif user_agent.is_tablet:
+            platform = PlatformEnum.tablet
 
         with session_scope():
             history = AuthHistory(
                 user_id=self.user.id,
-                user_agent=user_agent.string,
-                ip_addr=ip_addr,
-                device=user_agent.platform,
+                user_agent=request.user_agent.string,
+                ip_addr=request.remote_addr,
+                device=user_agent.device,
+                platform=platform,
             )
             db.session.add(history)
 

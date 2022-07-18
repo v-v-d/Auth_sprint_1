@@ -82,19 +82,27 @@ class JWTSettings(BaseSettings):
 
 
 class OauthSettings(BaseSettings):
-    GOOGLE_CLIENT_ID: str = ""
-    GOOGLE_CLIENT_SECRET: str = ""
-    GOOGLE_SERVER_METADATA_URL: str = ""
+    class GoogleSettings(BaseSettings):
+        CLIENT_ID: str = ""
+        CLIENT_SECRET: str = ""
+        SERVER_METADATA_URL: str = ""
 
-    YANDEX_CLIENT_ID: str = ""
-    YANDEX_CLIENT_SECRET: str = ""
-    YANDEX_API_BASE_URL: str = ""
-    YANDEX_ACCESS_TOKEN_URL: str = ""
-    YANDEX_AUTHORIZE_URL: str = ""
-    YANDEX_USERINFO_ENDPOINT: str = ""
+        class Config:
+            env_prefix = "OAUTH_GOOGLE_"
 
-    class Config:
-        env_prefix = "OAUTH_"
+    class YandexSettings(BaseSettings):
+        CLIENT_ID: str = ""
+        CLIENT_SECRET: str = ""
+        API_BASE_URL: str = ""
+        ACCESS_TOKEN_URL: str = ""
+        AUTHORIZE_URL: str = ""
+        USERINFO_ENDPOINT: str = ""
+
+        class Config:
+            env_prefix = "OAUTH_YANDEX_"
+
+    GOOGLE: GoogleSettings = GoogleSettings()
+    YANDEX: YandexSettings = YandexSettings()
 
 
 class SecuritySettings(BaseSettings):
@@ -104,6 +112,20 @@ class SecuritySettings(BaseSettings):
 
     class Config:
         env_prefix = "SECURITY_"
+
+
+class PaginationSettings(BaseSettings):
+    PAGE_LIMIT: int = 5
+
+    class Config:
+        env_prefix = "PAGINATION_"
+
+
+class CacheSettings(BaseSettings):
+    TTL: int = 60 * 60 * 3
+
+    class Config:
+        env_prefix = "CACHE_"
 
 
 class APMSettings(BaseSettings):
@@ -132,7 +154,6 @@ class CommonSettings(BaseSettings):
     RATE_LIMIT: RateLimitSettings = RateLimitSettings()
     OAUTH: OauthSettings = OauthSettings()
     SECURITY: SecuritySettings = SecuritySettings()
+    PAGINATION: PaginationSettings = PaginationSettings()
     APM: APMSettings = APMSettings()
-
-    DEFAULT_PAGE_LIMIT: int = 5
-    CACHE_DEFAULT_TIMEOUT: int = 60 * 60 * 3
+    CACHE: CacheSettings = CacheSettings()
